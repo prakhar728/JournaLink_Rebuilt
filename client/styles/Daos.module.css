@@ -1,0 +1,91 @@
+.daoViewWrapper{
+    display: flex;
+    flex-direction: column;
+}
+.navWrapper{
+    display: flex;
+    flex-direction:column ;
+    justify-content: space-evenly;
+    height:30%;
+    align-items: center;
+    margin-top: 2vh;
+}
+.navWrapper a{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 20%;
+    color: #f99496dc;
+}
+.upperNav{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+}
+.upperNav h1{
+    text-align: center;
+    font-weight: 500;
+    position: absolute;
+    width: 99%;
+}
+.lowerNav{
+    border:1px solid #bab9b9;
+    width: 15%;
+    margin-top: 1vh;
+}
+.daosList{
+    border:2px solid blue;
+    height: 80vh;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4vh;
+}
+.daoWrapper{
+    border:2px solid red;
+    width: 90%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.daoLeft{
+    width: 30%;
+    border:2px solid red;
+}
+.daoLeft img{
+    width: 20vw;
+    height:30vh;
+}
+.daoRight{
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    height:30vh;
+    justify-content: space-evenly;
+}
+.daoRight h2{
+    font-size: 36px;
+    border:2px solid white;
+    padding: 0;
+    margin: 0;
+}
+.daoRight h4{
+    font-size: 24px;
+    border:2px solid white;
+    padding: 0;
+    margin: 0;
+
+}
+.buttonAndInfo{
+    border:2px solid blue;
+    height:40%;
+    display: flex;
+    justify-content: space-evenly;
+}
+.buttonAndInfo button{
+    background-image: linear-gradient(#B15556,rgba(177, 85, 86, 0.761));
+    font-size: 18px;
+    width: 50%;
+}
