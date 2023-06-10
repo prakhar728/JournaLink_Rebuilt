@@ -1,0 +1,118 @@
+.daoViewWrapper {
+  display: flex;
+  flex-direction: column;
+}
+.navWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 30%;
+  align-items: center;
+}
+.navWrapper a {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 20%;
+  color: #f99496dc;
+}
+.upperNav {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.upperNav .dashboardHeader {
+  font-weight: 500;
+  position: absolute;
+  width: 99%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dashboardHeader p {
+  font-size: 32px;
+  border-bottom: 1px solid #d9d9d9;
+  padding: 2vh;
+  width: fit-content;
+}
+.lowerNav {
+  border: 1px solid #bab9b9;
+  width: 15%;
+}
+.daosList {
+  height: 70vh;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: grid;
+  grid-template-columns: auto auto auto;
+  padding:4vh 0 0 1vw;
+}
+.daosList::-webkit-scrollbar {
+  width: 8px;
+  background-color: #000;
+}
+
+/* Track */
+.daosList::-webkit-scrollbar-track {
+  background: #000;
+}
+
+/* Handle */
+.daosList::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.daosList::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+.daoWrapper {
+  height:40%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  border-right: 2px solid #F2E7D4;
+}
+.daoLeft {
+  width: 30%;
+  height:80%;
+}
+.daoLeft img {
+ width: 100%;
+ height: 100%;
+}
+.daoRight {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+.daoRight h2 {
+  font-size: 36px;
+  padding: 0;
+  margin: 0;
+}
+
+.Info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+.Info span{
+    display: inline;
+    font-weight: 600;
+}
+.button{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.button button{
+  background-image: linear-gradient(#b15556, rgba(177, 85, 86, 0.761));
+  font-size: 18px;
+  width: 50%;
+  border:2px solid #7f3537;
+  border-radius: 8px;
+}
