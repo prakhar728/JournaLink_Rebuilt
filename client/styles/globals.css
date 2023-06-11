@@ -26,3 +26,23 @@ body {
   position: absolute;
   right: -10px;
 }
+body::-webkit-scrollbar {
+  width: 8px;
+  background-color: #000;
+}
+
+/* Track */
+body::-webkit-scrollbar-track {
+  background: #000;
+}
+
+/* Handle */
+body::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+body::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
