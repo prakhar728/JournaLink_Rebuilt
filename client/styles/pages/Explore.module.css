@@ -108,11 +108,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    height: 20%;
+}
+.button a{
+    width: 40%;
 }
 .button button{
   background-image: linear-gradient(#b15556, rgba(177, 85, 86, 0.761));
   font-size: 18px;
-  width: 50%;
+  width: 100%;
   border:2px solid #7f3537;
   border-radius: 8px;
+  color:white;
+  cursor: pointer;
 }

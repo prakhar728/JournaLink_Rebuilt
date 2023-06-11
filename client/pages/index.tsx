@@ -1,6 +1,9 @@
 import Head from 'next/head';
 import { NextPage } from 'next';
-
+import Navbar from '../components/LandingPage/Navbar';
+import Landing from '../components/LandingPage/Landing';
+import newspaper from "../assets/newspaper.svg";
+import Image from 'next/image';
 const Home: NextPage = () => {
   return (
     <div>
@@ -13,7 +16,8 @@ const Home: NextPage = () => {
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
-      Hello
+      <Navbar />
+      <Landing />
     </div>
   );
 };
