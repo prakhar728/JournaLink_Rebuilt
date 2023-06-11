@@ -6,7 +6,7 @@ import plus from "../../../assets/Plus.svg";
 import Image from 'next/image';
 import DaoDemo from "../../../assets/DaoDemo.png";
 import DaoNav from "../../../components/DaoDashboardNav.tsx/Index";
-const index = () => {
+const Index = () => {
   return (
     <div >
       <Navbar />
@@ -28,7 +28,7 @@ const index = () => {
               <Image src={DaoDemo} alt="" />
             </div>
             <div className={styles.daoRight}>
-              <h2>"BBC NEWS"</h2>
+              <h2> &quot; BBC NEWS &quot;</h2>
               <div className={styles.Info}>
                 <p><span>520</span> Members Joined</p> 
                 <p><span>1K</span> FIL Backed</p> 
@@ -46,4 +46,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Index

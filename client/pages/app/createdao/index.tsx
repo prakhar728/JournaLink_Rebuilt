@@ -5,7 +5,7 @@ import moto from "../../../assets/Moto.svg";
 import lines from "../../../assets/Lines.png"
 import Image from 'next/image';
 import thumbpin from "../../../assets/thumbpin.svg";
-const index = () => {
+const Index = () => {
   const [formData, setfirst] = useState({
     heading: "",
     memberCapacity: "",
@@ -58,12 +58,15 @@ const index = () => {
                         }
                         setimage(e.target.files[0])
                           console.log(e.target.files);
+                          console.log(URL.createObjectURL(e.target.files[0]));
+                          
                           setimageURL(URL.createObjectURL(e.target.files[0]))
 
                       }}
                     />
                     :
-                    <img src={imageURL} alt="Uploaded Image" className={styles.uploadedImage}/>
+                    <Image src={imageURL} alt="Uploaded Image" className={styles.uploadedImage} width={300} 
+                    height={400}/>
                   }
                 </div>
               </div>
@@ -93,4 +96,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Index
