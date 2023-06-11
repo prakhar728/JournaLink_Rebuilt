@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from "../../../styles/pages/ExploreDao.module.css"
+import styles from "./ExploreDao.module.css"
 import Navbar from '../../../components/Navbar'
 import Link from 'next/link';
 import logoDao from "../../../assets/DaoDemo.png";

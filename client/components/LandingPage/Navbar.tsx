@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from "../../styles/components/LandingNav.module.css";
+import styles from "./LandingNav.module.css";
 import Image from 'next/image';
 import logo from "../../assets/Logo.png";
 import Frame from "../../assets/NavFrame.svg"

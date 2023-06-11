@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from "../../styles/components/Landing.module.css";
+import styles from "./Landing.module.css";
 import live from "../../assets/Live.svg";
 import Image from 'next/image';
 import Rotating from "../../assets/Rotating.png";

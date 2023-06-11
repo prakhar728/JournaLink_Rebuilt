@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from "../styles/components/Navbar.module.css";
+import styles from "./Navbar.module.css";
 import Image from 'next/image';
 import logo from '../assets/Logo.png';
 import { ConnectButton } from '@rainbow-me/rainbowkit';

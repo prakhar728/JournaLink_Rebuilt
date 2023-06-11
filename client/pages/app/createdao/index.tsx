@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Navbar from '../../../components/Navbar'
-import styles from '../../../styles/pages/CreateDao.module.css';
+import styles from './CreateDao.module.css';
 import moto from "../../../assets/Moto.svg";
 import lines from "../../../assets/Lines.png"
 import Image from 'next/image';

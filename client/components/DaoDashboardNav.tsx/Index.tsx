@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import styles from '../../styles/components/DaoNav.module.css';
+import styles from './DaoNav.module.css';
 import Link from 'next/link';
 const Index = () => {
   const [activeElement, setactiveElement] = useState("1");
