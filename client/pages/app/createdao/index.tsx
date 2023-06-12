@@ -1,28 +1,150 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../../../components/Navbar'
 import styles from './CreateDao.module.css';
 import moto from "../../../assets/Moto.svg";
 import lines from "../../../assets/Lines.png"
 import Image from 'next/image';
 import thumbpin from "../../../assets/thumbpin.svg";
+import { WalletClient, useAccount, useWalletClient } from 'wagmi';
+import { createPublicClient, createWalletClient, custom, http, parseUnits } from 'viem';
+import { filecoinCalibration } from 'viem/chains';
+import { Database } from "@tableland/sdk";
+import daoContractData from "../../../assets/contractData/Dao.json";
+import daoContractAddress from "../../../assets/contractData/Dao-address.json";
+import lighthouse from '@lighthouse-web3/sdk';
+
+declare var window: any
 const Index = () => {
+
+  //MISCELLANEOUS HELPER FUNCTIONS
+  const [loading, setloading] = useState(false);
+  const [message, setmessage] = useState("");
+  const { address } = useAccount();
+  const lighthouseKey = process.env.NEXT_PUBLIC_LIGHTHOUSE_KEY;
+  //PREPARING FORM AND FORM DATA
   const [formData, setfirst] = useState({
     heading: "",
     memberCapacity: "",
     information: "",
+    image: ""
   })
-  const [image, setimage] =useState<File>()
+  const [image, setimage] = useState<File>()
   const [imageURL, setimageURL] = useState("")
-  const handleClick = (e: any) => {
-    console.log("Submit");
 
+  // THESE ARE HOOKS TO INITIATE WALLET CONNECTION AND MANAGE DEPLOYMENT ON CLIENT SIDE
+  const prepareDB = async () => {
+    const prefix: string = "dao_table";
+
+    const { meta: create } = await db
+      .prepare(`CREATE TABLE ${prefix} (address text primary key, name text,heading text,memberCount integer,additionalInfo text,thumbnail text);`)
+      .run();
+
+    console.log(create.txn?.name);
+  }
+  useEffect(() => {
+    // prepareDB();
+
+  }, [])
+
+  var walletClient: WalletClient;
+  if (typeof window === "object") {
+    walletClient = createWalletClient({
+      chain: filecoinCalibration,
+      transport: custom(window.ethereum)
+    })
+  }
+
+  const publicClient = createPublicClient({
+    chain: filecoinCalibration,
+    transport: http()
+  })
+
+  // PREPARING TABLELAND
+  const db = new Database<DaoContractSchema>();
+
+  // THIS WILL DEPLOY THE CURRENT DAO CONTRACT AS WELL AS ADD DATA TO TABLELAND
+  const handleClick = async (e: any) => {
+    console.log("Deploying the Contract");
+    console.log("The Form data is");
+    console.log(formData);
+    try {
+      setloading(true);
+      setmessage("Deploying your Dao contract to Calibration Net");
+      if (address) {
+        const hash = await walletClient.deployContract({
+          abi: daoContractData.abi,
+          account: address,
+          args: [],
+          bytecode: `0x${daoContractData.bytecode}`
+        })
+        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        console.log(receipt.contractAddress)
+        setmessage("Contract Deployed To Blockchain" + receipt.contractAddress);
+        setloading(false);
+
+
+        const { meta: insert } = await db
+          .prepare(
+            `INSERT INTO ${daoTableName} address text primary key, name text,heading text,memberCount integer,additionalInfo text,thumbnail text) VALUES (?,?,?,?,?,?,?,?,?);`
+          )
+          .bind(
+            receipt.contractAddress,
+            address,
+            formData.heading,
+            0,
+            formData.information,
+            imageURL
+          )
+          .run()
+        await insert.txn?.wait();
+      }
+
+
+    } catch (error) {
+      console.log(error);
+
+    }
+  }
+
+
+  const uploadImage = async (file: FileList) => {
+    // Push file to lighthouse node
+    // Both file and folder are supported by upload function
+    if (lighthouseKey) {
+      try {
+        console.log(lighthouseKey);
+        const output = await lighthouse.upload(file, lighthouseKey);
+        console.log('File Status:', output);
+  
+        console.log('Visit at https://gateway.lighthouse.storage/ipfs/' + output.data.Hash);
+        setfirst({ ...formData, image: `https://gateway.lighthouse.storage/ipfs/' + ${output.data.Hash}` }
+        )
+      } catch (error) {
+        console.log(error);
+        
+      }
+     
+
+    }
+  }
+
+
+  if (!address) {
+    return <div>
+      Connect to Wallet Calibration Net First
+    </div>
+  }
+  if (loading) {
+    return <div>
+      Message
+    </div>
   }
   return (
     <div >
       <Navbar />
       <div className={styles.createDaoWrapper}>
         <div className={styles.daoFormContainer1}></div>
-        <div className={styles.daoFormContainer2}></div>\
+        <div className={styles.daoFormContainer2}></div>
         {/* THE MAIN CONTAINER TO WRITE STUFF */}
         <div className={styles.daoFormContainer3}>
           <div className={styles.daoFormNavbar}>
@@ -48,25 +170,26 @@ const Index = () => {
               <div className={styles.imageHolderStyling}>
                 <Image src={thumbpin} alt="Thumbpin" className={styles.thumbpin} />
                 <div>
-                  {imageURL==""?
+                  {imageURL == "" ?
                     <input type="file" placeholder='Choose Image'
-                      value={imageURL} onChange={(e) => {
-                      
-                          if (!e.target.files || e.target.files.length === 0) {
-                            setimage(undefined)
-                            return
+                      value={imageURL} accept="image/*" onChange={(e) => {
+
+                        if (!e.target.files || e.target.files.length === 0) {
+                          setimage(undefined)
+                          return
                         }
-                        setimage(e.target.files[0])
-                          console.log(e.target.files);
-                          console.log(URL.createObjectURL(e.target.files[0]));
-                          
-                          setimageURL(URL.createObjectURL(e.target.files[0]))
+                        setimage(e.target.files[0]);
+                        uploadImage(e.target.files);
+                        console.log(e.target.files);
+                        console.log(URL.createObjectURL(e.target.files[0]));
+
+                        setimageURL(URL.createObjectURL(e.target.files[0]))
 
                       }}
                     />
                     :
-                    <Image src={imageURL} alt="Uploaded Image" className={styles.uploadedImage} width={300} 
-                    height={400}/>
+                    <Image src={imageURL} alt="Uploaded Image" className={styles.uploadedImage} width={300}
+                      height={400} />
                   }
                 </div>
               </div>
@@ -85,7 +208,7 @@ const Index = () => {
                   setfirst({ ...formData, information: e.target.value })
                 }}
               />
-              <div className={styles.daoButton} onClick={handleClick}>
+              <div className={styles.daoButton} onClick={handleClick} >
                 <button>Submit</button>
               </div>
             </div>

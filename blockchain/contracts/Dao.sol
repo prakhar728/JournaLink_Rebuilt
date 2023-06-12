@@ -13,6 +13,7 @@ contract Dao {
      address[] private members;
      mapping(string=>proposal) proposals;
      address immutable owner;
+     
      struct proposal{
          string requirement;
          uint256 maxMembers;

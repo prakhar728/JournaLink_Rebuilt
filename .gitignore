@@ -1,2 +1,3 @@
 node_modules/
 fevm-hardhat-kit
+.env
