@@ -1,6 +1,6 @@
 export interface DaoContractSchema {
     address: string;
-    owner:string;
+    name:string;
     heading:string,
     memberCount:number,
     additionalInfo:string,

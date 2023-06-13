@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from "./Landing.module.css";
-import live from "../../assets/Live.svg";
+import live from "../../assets/giphy.gif";
 import Image from 'next/image';
 import Rotating from "../../assets/Rotating.png";
 import Link from 'next/link';

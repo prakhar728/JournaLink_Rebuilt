@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from "./Explore.module.css";
 import Navbar from '../../../components/Navbar';
 import Link from 'next/link';
@@ -7,12 +7,15 @@ import DaoDemo from "../../../assets/DaoDemo.png";
 import DaoNav from "../../../components/DaoDashboardNav.tsx/Index";
 import { Database } from '@tableland/sdk';
 import { createPublicClient, createWalletClient, custom, http } from 'viem';
-import { WalletClient } from 'wagmi';
+import { WalletClient, useAccount } from 'wagmi';
 import { filecoinCalibration } from 'viem/chains';
 import {DaoContractSchema, daoTableName} from "../../../tableland/index";
 declare var window: any
 
 const Index = () => {
+  const [daos, setdaos] = useState<DaoContractSchema[]>([]);
+
+  const { address, isConnecting, isDisconnected } = useAccount()
   var walletClient: WalletClient;
   if (typeof window === "object") {
     walletClient = createWalletClient({
@@ -32,6 +35,7 @@ const Index = () => {
     try {
       const { results } = await db.prepare<DaoContractSchema>(`SELECT * FROM ${daoTableName};`).all();
       console.log(results);
+      setdaos(results);
     } catch (error) {
       console.log(error);
       
@@ -58,8 +62,31 @@ const Index = () => {
           
         </div>
         <div className={styles.daosList}>
+          {daos.length !=0 && 
+          daos.map((dao,index)=>{
+            return(
+              <div className={styles.daoWrapper} key={index}>
+              <div className={styles.daoLeft}>
+                <Image src={dao.thumbnail} alt={`Thumbnail of ${dao.heading}`} width={300} height={300} />
+              </div>
+              <div className={styles.daoRight}>
+                <h2> &quot; {dao.heading} &quot;</h2>
+                <div className={styles.Info}>
+                  <p><span>{dao.memberCount}</span> Members Joined</p> 
+                  <p><span>0</span> FIL Backed</p> 
+                  
+                </div>
+                <div className={styles.button} >
+                  <Link href={`/app/explore/${dao.address}`}><button > {dao.name==address?'Analyse':'Explore'}  </button></Link>
+                </div>
+              </div>
+            </div>
+            )
+           
+          })
+          }
           {/* THIS WILL BE REPEATED OVER */}
-          <div className={styles.daoWrapper}>
+          {/* <div className={styles.daoWrapper}>
             <div className={styles.daoLeft}>
               <Image src={DaoDemo} alt="" />
             </div>
@@ -74,7 +101,7 @@ const Index = () => {
                 <Link href="/app/exploredao"><button >Explore</button></Link>
               </div>
             </div>
-          </div>
+          </div> */}
           
         </div>
       </div>

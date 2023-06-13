@@ -7,6 +7,10 @@
     display: flex;
     align-items: center;
 }
+.upper1 img{
+    height: 100%;
+    width: 15%;
+}
 .upper2 h1{
     font-style: italic;
 }

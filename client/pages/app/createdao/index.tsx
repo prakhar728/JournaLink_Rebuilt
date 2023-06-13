@@ -33,19 +33,19 @@ const Index = () => {
   const [imageURL, setimageURL] = useState("")
 
   // THESE ARE HOOKS TO INITIATE WALLET CONNECTION AND MANAGE DEPLOYMENT ON CLIENT SIDE
-  const prepareDB = async () => {
-    const prefix: string = "dao_table";
+  // const prepareDB = async () => {
+  //   const prefix: string = "dao_table";
 
-    const { meta: create } = await db
-      .prepare(`CREATE TABLE ${prefix} (address text primary key, name text,heading text,memberCount integer,additionalInfo text,thumbnail text);`)
-      .run();
+  //   const { meta: create } = await db
+  //     .prepare(`CREATE TABLE ${prefix} (address text primary key, name text,heading text,memberCount integer,additionalInfo text,thumbnail text);`)
+  //     .run();
 
-    console.log(create.txn?.name);
-  }
-  useEffect(() => {
-    // prepareDB();
+  //   console.log(create.txn?.name);
+  // }
+  // useEffect(() => {
+  //   // prepareDB();
 
-  }, [])
+  // }, [])
 
   var walletClient: WalletClient;
   if (typeof window === "object") {
@@ -65,6 +65,7 @@ const Index = () => {
 
   // THIS WILL DEPLOY THE CURRENT DAO CONTRACT AS WELL AS ADD DATA TO TABLELAND
   const handleClick = async (e: any) => {
+    e.preventDefault();
     console.log("Deploying the Contract");
     console.log("The Form data is");
     console.log(formData);
@@ -118,7 +119,10 @@ const Index = () => {
         console.log('File Status:', output);
   
         console.log('Visit at https://gateway.lighthouse.storage/ipfs/' + output.data.Hash);
-        setfirst({ ...formData, image: `https://gateway.lighthouse.storage/ipfs/' + ${output.data.Hash}` }
+        const status = await lighthouse.dealStatus('QmeFfvb8cdufVzSD5UoUFYQNF6ZMDeNfwj573brHnLfCbY');
+        console.log(status);
+        
+        setfirst({ ...formData, image: `https://gateway.lighthouse.storage/ipfs/${output.data.Hash}` }
         )
       } catch (error) {
         console.log(error);
@@ -130,18 +134,7 @@ const Index = () => {
   }
 
 
-  if (!address) {
-    return <div>
-      <Navbar />
-      Connect to Wallet Calibration Net First
-    </div>
-  }
-  if (loading) {
-    return <div>
-      <Navbar />
-      Message
-    </div>
-  }
+
   return (
     <div >
       <Navbar />
