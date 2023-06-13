@@ -1,4 +1,4 @@
-interface DaoContractSchema {
+export interface DaoContractSchema {
     address: string;
     owner:string;
     heading:string,
@@ -7,10 +7,10 @@ interface DaoContractSchema {
     thumbnail:string,
  }
 
- interface promptSchema{
+ export interface promptSchema{
     id:number,
     DOE:number,
  }
 
- const daoTableName="dao_table_314159_80";
- const promptTableName="";
+ export const daoTableName="dao_table_314159_80";
+ export const promptTableName="";

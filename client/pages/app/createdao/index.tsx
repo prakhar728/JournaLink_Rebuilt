@@ -12,6 +12,7 @@ import { Database } from "@tableland/sdk";
 import daoContractData from "../../../assets/contractData/Dao.json";
 import daoContractAddress from "../../../assets/contractData/Dao-address.json";
 import lighthouse from '@lighthouse-web3/sdk';
+import { DaoContractSchema, daoTableName } from '../../../tableland';
 
 declare var window: any
 const Index = () => {
@@ -85,7 +86,7 @@ const Index = () => {
 
         const { meta: insert } = await db
           .prepare(
-            `INSERT INTO ${daoTableName} address text primary key, name text,heading text,memberCount integer,additionalInfo text,thumbnail text) VALUES (?,?,?,?,?,?,?,?,?);`
+            `INSERT INTO ${daoTableName} (address  , name ,heading ,memberCount ,additionalInfo ,thumbnail ) VALUES (?,?,?,?,?,?);`
           )
           .bind(
             receipt.contractAddress,
@@ -93,7 +94,7 @@ const Index = () => {
             formData.heading,
             0,
             formData.information,
-            imageURL
+            formData.image
           )
           .run()
         await insert.txn?.wait();
@@ -131,11 +132,13 @@ const Index = () => {
 
   if (!address) {
     return <div>
+      <Navbar />
       Connect to Wallet Calibration Net First
     </div>
   }
   if (loading) {
     return <div>
+      <Navbar />
       Message
     </div>
   }
