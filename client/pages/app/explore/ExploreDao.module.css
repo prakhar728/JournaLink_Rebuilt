@@ -14,6 +14,7 @@
     align-items: center;
     height:10%;
     padding:0 1vw;
+    justify-content: space-between;
 }
 .nav h2{
     position: absolute;
@@ -23,9 +24,24 @@
 }
 .nav a{
     color: white;
-    position: absolute;
+    position: relative;
     z-index: 2;
     text-decoration: none;
+}
+.promptButton{
+    width: 15%;
+    height: 60%;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.promptButton button{
+    background-image:linear-gradient(to right,#B15556,#f99496d5) ;  
+    text-align: center;
+    height: 100%;
+    border-radius: 10px;
+    border:none;
+    color:#FFFFFF;
+    width: 100%;
 }
 .main{
     width: 90%;

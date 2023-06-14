@@ -11,12 +11,14 @@ import { filecoinCalibration } from 'viem/chains';
 import { Database } from '@tableland/sdk';
 import { DaoContractSchema, daoTableName } from '../../../tableland';
 import downloadButton from "../../../assets/DownloadButton.svg";
+import { useAccount } from 'wagmi';
 declare var window: any
 
 const index = () => {
   // HOOKS FOR NEXTJS INITIALISATION
   const mounted = useIsMounted();
-  const router = useRouter()
+  const router = useRouter();
+  const {address} = useAccount();
   const [daoAddress, setdaoAddress] = useState<String>("")
   const [daoInfo, setdaoInfo] = useState<DaoContractSchema[]>([])
 
@@ -61,6 +63,9 @@ const index = () => {
           <div className={styles.nav}>
             <Link href="/app/explore"> &lt; Go Back </Link>
             <h2>0 Prompts Till Now</h2>
+            {address===daoInfo[0].name && <Link href={`/app/addprompts?contractAddress=${daoInfo[0].address}`} className={styles.promptButton}>
+              <button>Start a Prompt</button>
+            </Link>}
           </div>
           <div className={styles.main}>
             <div className={styles.left}>
@@ -81,11 +86,8 @@ const index = () => {
                 <div className={styles.info4}>
                   <Link href="/"><button>Requirements <Image src={downloadButton} alt="Download Requirements" /></button></Link>
                   <Link href="/"><button>Contribute</button></Link>
-
                 </div>
               </div>
-              
-              
             </div>
           </div>
         </div>

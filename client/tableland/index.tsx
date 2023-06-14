@@ -13,4 +13,4 @@ export interface DaoContractSchema {
  }
 
  export const daoTableName="dao_table_314159_80";
- export const promptTableName="";
+ export const promptTableName="prompt_table_314159_122";
