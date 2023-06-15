@@ -11,7 +11,7 @@ contract Dao {
 
      uint256 private TotalMembers;
      address[] private members;
-     mapping(string=>proposal) proposals;
+     mapping(string=>proposal) public proposals;
      address immutable owner;
      enum Status {
         notCreated,
@@ -55,6 +55,18 @@ contract Dao {
        return members;
     }
 
+     /**
+     * @dev Get the commits of a Proposal details
+     * @return value of 'members'
+     */
+    function getProposalDetails(string calldata _proposalId) view public returns(string memory,uint256,uint256,uint256 ) {
+       return (proposals[_proposalId].requirement,proposals[_proposalId].maxMembers,proposals[_proposalId].currentCount,proposals[_proposalId].reward);
+    }
+
+
+
+
+
 
     /**
      * @dev Add a member to the Dao
@@ -76,6 +88,7 @@ contract Dao {
          t.requirement=_required;
          t.maxMembers = _maxMembers;
          t.initialized=Status.created;
+         t.reward = _rewardAmount;
     }
 
      /**
@@ -88,6 +101,7 @@ contract Dao {
          require(t.currentCount<=t.maxMembers,"Max capacity Reached");
          require(t.commits[msg.sender].length==0,"Already Contributed");
          t.commits[msg.sender].push(_commitData);
+         t.currentCount=t.currentCount+1;
          TotalMembers=TotalMembers+1;
          addMember(msg.sender);
     }
