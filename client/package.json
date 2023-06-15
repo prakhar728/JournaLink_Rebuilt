@@ -20,7 +20,7 @@
     "wagmi": "~1.0.5"
   },
   "devDependencies": {
-    "@types/node": "^18.16.12",
+    "@types/node": "^18.16.18",
     "@types/react": "^18.2.6",
     "@types/uuid": "^9.0.2",
     "eslint": "^8.15.0",

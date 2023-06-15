@@ -13,13 +13,18 @@ contract Dao {
      address[] private members;
      mapping(string=>proposal) proposals;
      address immutable owner;
-     
+     enum Status {
+        notCreated,
+        created,
+        Rewarded
+    }
      struct proposal{
          string requirement;
          uint256 maxMembers;
+         uint256 currentCount;
          mapping(address=>string[]) commits;
          uint256 reward;
-         bool initialized;
+         Status initialized;
      }
 
      constructor(){
@@ -64,12 +69,13 @@ contract Dao {
      * @param _proposalId Id of the proposal Being created
      * @param _required The requirements of the proposal Being created
      */
-    function  createProposal(string calldata _proposalId,string calldata _required, uint256 _maxMembers) public {
-         require(!proposals[_proposalId].initialized, "Proposal already initialized for the given key");
+    function  createProposal(string calldata _proposalId,string calldata _required, uint256 _maxMembers, uint256 _rewardAmount) public payable {
+        require(proposals[_proposalId].initialized == Status.notCreated, "Proposal already initialized for the given key");
+        require(_rewardAmount==msg.value,"You need to lock more tokens");
          proposal storage t = proposals[_proposalId];
          t.requirement=_required;
          t.maxMembers = _maxMembers;
-         t.initialized=true;
+         t.initialized=Status.created;
     }
 
      /**
@@ -77,12 +83,13 @@ contract Dao {
      * @param _proposalID Id of the proposal Being created
      * @param _commitData IPFS link of the data commited
      */
-    function commitData(string calldata _proposalID,string calldata _commitData,uint256 _rewardAmount) public payable {
-        require(_rewardAmount==msg.value,"You need to lock more tokens");
+    function commitData(string calldata _proposalID,string calldata _commitData) public {
          proposal storage t = proposals[_proposalID];
+         require(t.currentCount<=t.maxMembers,"Max capacity Reached");
+         require(t.commits[msg.sender].length==0,"Already Contributed");
          t.commits[msg.sender].push(_commitData);
          TotalMembers=TotalMembers+1;
-         members.push(msg.sender);
+         addMember(msg.sender);
     }
 
     /**
@@ -90,14 +97,14 @@ contract Dao {
      * @param _proposalID Id of the proposal Being created
      */
     function rewardMembers(string calldata _proposalID) public {
+        require(msg.sender==owner,"Only owner can do this");
+        require(proposals[_proposalID].initialized == Status.created, "Proposal already Rewarded for the given key");
          proposal storage t = proposals[_proposalID];
          uint256 rewardPerPerson = t.reward/members.length;
          for(uint256 i=0;i<members.length;i++){
              payable(members[i]).transfer(rewardPerPerson);
          }
+         proposals[_proposalID].initialized=Status.Rewarded;
     }
-
-
-
   
 }

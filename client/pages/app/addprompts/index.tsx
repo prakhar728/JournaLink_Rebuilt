@@ -6,7 +6,7 @@ import lines from "../../../assets/Lines.png"
 import Image from 'next/image';
 import thumbpin from "../../../assets/thumbpin.svg";
 import { WalletClient, useAccount, useWalletClient } from 'wagmi';
-import { createPublicClient, createWalletClient, custom, http, parseUnits } from 'viem';
+import { createPublicClient, createWalletClient, custom, http, parseEther, parseUnits } from 'viem';
 import { filecoinCalibration } from 'viem/chains';
 import { Database } from "@tableland/sdk";
 import daoContractData from "../../../assets/contractData/Dao.json";
@@ -17,6 +17,7 @@ import upload from "../../../assets/UploadIcon.svg";
 import { useIsMounted } from '../../../hooks/useIsMounted';
 import { v4 as uuidv4 } from 'uuid'
 import { useRouter } from 'next/router';
+import { createHash, randomBytes } from 'crypto';
 
 declare var window: any
 const Index = () => {
@@ -40,7 +41,7 @@ const Index = () => {
     heading: "",
     Description: "",
     fileURL: "",
-    amount: "",
+    amount: "0",
     DOE: "",
     capacity: ""
   })
@@ -57,6 +58,15 @@ const Index = () => {
     getDaoAddress();
 
   }, [mounted])
+
+  function generateRandomNumber(): string {
+    const randomBytesBuffer = randomBytes(8);
+    const randomSixDigitNumber = parseInt(randomBytesBuffer.toString('hex'), 16)
+      .toString()
+      .slice(0, 6);
+  
+    return randomSixDigitNumber;
+  }
 
   // THESE ARE HOOKS TO INITIATE WALLET CONNECTION AND MANAGE DEPLOYMENT ON CLIENT SIDE
   interface tData {
@@ -115,24 +125,25 @@ const Index = () => {
       setloading(true);
       setmessage("Uploading Prompt to Contract");
       if (address) {
-        const promptId = uuidv4();
+        const promptId = generateRandomNumber();
         console.log('Unique id for prompt', promptId);
-
-        const { request } = await publicClient.simulateContract({
+        const amt = parseInt(formData.amount);
+        const hash = await walletClient.writeContract({
           address: `0x${contractAddress}`,
           abi: daoContractData.abi,
           functionName: 'createProposal',
-          args: [promptId, formData.fileURL, formData.capacity],
+          args: [promptId, formData.fileURL,parseInt(formData.capacity) ],
           account: address,
-
+          // @ts-ignore
+          value:parseUnits(`${amt}`,18)
         })
-        const hash = await walletClient.writeContract(request)
+        
         setmessage("Prompt Uploaded to Contract" + hash);
         setloading(false);
 
         const { meta: insert } = await db
           .prepare(
-            `INSERT INTO ${promptTableName} (promptid , contractaddress, heading,description  ) VALUES (?,?,?);`
+            `INSERT INTO ${promptTableName} (promptid , contractaddress, heading,description  ) VALUES (?,?,?,?);`
           )
           .bind(
             promptId,
@@ -206,8 +217,14 @@ const Index = () => {
           <form className={styles.daoForm}>
             <div className={styles.innerForm}>
               <div className={styles.formLeft}>
-                <input type="text" placeholder='Your Heading' />
-                <textarea placeholder='Add Description' rows={8} />
+                <input type="text" placeholder='Your Heading' value={formData.heading
+                } onChange={(e)=>{
+                  setFormData({...formData,heading:e.target.value})
+                }} />
+                <textarea placeholder='Add Description' rows={8} value={formData.Description
+                } onChange={(e)=>{
+                  setFormData({...formData,Description:e.target.value})
+                }} />
                 <div className={styles.file}>
                   <input type="file" onChange={handleFileChange} />
                   {!selectedFile && (
@@ -222,20 +239,29 @@ const Index = () => {
                 </div>
               </div>
               <div className={styles.formRight}>
-                <input type="text" placeholder='Amount of pool prize' />
+                <input type="text" placeholder='Amount of pool prize' value={formData.amount
+                } onChange={(e)=>{
+                  setFormData({...formData,amount:e.target.value})
+                }} />
                 <div className={styles.DOE}>
                   Date of Expiration
-                  <input type="datetime-local" className={styles.inputDate} placeholder="Date of expiration" />
+                  <input type="datetime-local" className={styles.inputDate} placeholder="Date of expiration" value={formData.DOE
+                } onChange={(e)=>{
+                  setFormData({...formData,DOE:e.target.value})
+                }}/>
                 </div>
-                <div className={styles.memberCapacity}>
+                <div className={styles.memberCapacity} >
                   Member Capacity
-                  <input />
+                  <input value={formData.capacity
+                } onChange={(e)=>{
+                  setFormData({...formData,capacity:e.target.value})
+                }}/>
                 </div>
 
               </div>
             </div>
 
-          <button className={styles.submit}>Submit</button>
+          <button className={styles.submit} onClick={handleClick}>Submit</button>
           </form>
         </div>
       </div>

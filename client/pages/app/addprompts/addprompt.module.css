@@ -100,7 +100,6 @@
   flex-direction: column;
   justify-content: space-evenly;
   height: 65%;
-  border:2px solid blue;
 }
 .formheading {
   font-size: 18px;
@@ -215,4 +214,5 @@
   font-size: 32px;
   width: 20%;
   border-radius: 10px;
+  margin: auto;
 }
