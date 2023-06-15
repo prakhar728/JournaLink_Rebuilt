@@ -8,9 +8,10 @@ export interface DaoContractSchema {
  }
 
  export interface promptSchema{
-    id:number,
-    DOE:number,
+   promptid:number,
+   contractaddress:string,
+   heading:string,
+   description:string
  }
-
- export const daoTableName="dao_table_314159_80";
- export const promptTableName="prompt_table_314159_122";
+ export const daoTableName="dao_table_314159_155";
+ export const promptTableName="prompt_table_314159_156";

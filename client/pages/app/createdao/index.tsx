@@ -13,6 +13,7 @@ import daoContractData from "../../../assets/contractData/Dao.json";
 import daoContractAddress from "../../../assets/contractData/Dao-address.json";
 import lighthouse from '@lighthouse-web3/sdk';
 import { DaoContractSchema, daoTableName } from '../../../tableland';
+import { useIsMounted } from '../../../hooks/useIsMounted';
 
 declare var window: any
 const Index = () => {
@@ -21,6 +22,7 @@ const Index = () => {
   const [loading, setloading] = useState(false);
   const [message, setmessage] = useState("");
   const { address } = useAccount();
+  const mounted = useIsMounted();
   const lighthouseKey = process.env.NEXT_PUBLIC_LIGHTHOUSE_KEY;
   //PREPARING FORM AND FORM DATA
   const [formData, setfirst] = useState({
@@ -33,19 +35,24 @@ const Index = () => {
   const [imageURL, setimageURL] = useState("")
 
   // THESE ARE HOOKS TO INITIATE WALLET CONNECTION AND MANAGE DEPLOYMENT ON CLIENT SIDE
+  // var t=0;
   // const prepareDB = async () => {
+  //   t++;
   //   const prefix: string = "dao_table";
 
   //   const { meta: create } = await db
   //     .prepare(`CREATE TABLE ${prefix} (address text primary key, name text,heading text,memberCount integer,additionalInfo text,thumbnail text);`)
   //     .run();
-
+  //     console.log(create);
+      
   //   console.log(create.txn?.name);
   // }
   // useEffect(() => {
-  //   // prepareDB();
-
-  // }, [])
+  //   if(mounted==true)
+  //   prepareDB();
+  //   console.log(mounted);
+    
+  // }, [mounted])
 
   var walletClient: WalletClient;
   if (typeof window === "object") {
@@ -119,8 +126,7 @@ const Index = () => {
         console.log('File Status:', output);
   
         console.log('Visit at https://gateway.lighthouse.storage/ipfs/' + output.data.Hash);
-        const status = await lighthouse.dealStatus('QmeFfvb8cdufVzSD5UoUFYQNF6ZMDeNfwj573brHnLfCbY');
-        console.log(status);
+       
         
         setfirst({ ...formData, image: `https://gateway.lighthouse.storage/ipfs/${output.data.Hash}` }
         )

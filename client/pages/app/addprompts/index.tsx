@@ -12,7 +12,7 @@ import { Database } from "@tableland/sdk";
 import daoContractData from "../../../assets/contractData/Dao.json";
 import daoContractAddress from "../../../assets/contractData/Dao-address.json";
 import lighthouse from '@lighthouse-web3/sdk';
-import { DaoContractSchema, daoTableName, promptTableName } from '../../../tableland';
+import { DaoContractSchema, daoTableName, promptSchema, promptTableName } from '../../../tableland';
 import upload from "../../../assets/UploadIcon.svg";
 import { useIsMounted } from '../../../hooks/useIsMounted';
 import { v4 as uuidv4 } from 'uuid'
@@ -50,9 +50,7 @@ const Index = () => {
       const address = router.query.contractAddress.substring(2,);
       setContractAddress(address);
       console.log(address);
-
     }
-
   }
   useEffect(() => {
     getDaoAddress();
@@ -95,6 +93,7 @@ const Index = () => {
   //   console.log(create.txn?.name);
   // }
   // useEffect(() => {
+  //   if(mounted)
   //   prepareDB();
   //   // test();
   // }, [mounted])
@@ -113,7 +112,7 @@ const Index = () => {
   })
 
   // PREPARING TABLELAND
-  const db = new Database<DaoContractSchema>();
+  const db = new Database<promptSchema>();
 
   // THIS WILL ADD THE PROMPT TO CONTRACT AND SOME DETAILS TO TABLELAND SQL
   const handleClick = async (e: any) => {
@@ -128,11 +127,13 @@ const Index = () => {
         const promptId = generateRandomNumber();
         console.log('Unique id for prompt', promptId);
         const amt = parseInt(formData.amount);
+        console.log(contractAddress);
+        
         const hash = await walletClient.writeContract({
           address: `0x${contractAddress}`,
           abi: daoContractData.abi,
           functionName: 'createProposal',
-          args: [promptId, formData.fileURL,parseInt(formData.capacity) ],
+          args: [promptId, formData.fileURL,parseInt(formData.capacity),parseUnits(`${amt}`,18) ],
           account: address,
           // @ts-ignore
           value:parseUnits(`${amt}`,18)
@@ -147,7 +148,7 @@ const Index = () => {
           )
           .bind(
             promptId,
-            contractAddress,
+            `0x${contractAddress}`,
             formData.heading,
             formData.Description
           )
