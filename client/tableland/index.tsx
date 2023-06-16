@@ -13,5 +13,17 @@ export interface DaoContractSchema {
    heading:string,
    description:string
  }
+ export interface newsSchema{
+  newsID:string,
+  creatoraddress:string,
+  headline:string,
+  newsinfo:string,
+  tags:string,
+  thumbnail:string,
+  videoURL:string,
+  likes:number,
+  DOC:string
+ }
  export const daoTableName="dao_table_314159_155";
  export const promptTableName="prompt_table_314159_156";
+ export const newsTableName= "news_table_314159_198";
