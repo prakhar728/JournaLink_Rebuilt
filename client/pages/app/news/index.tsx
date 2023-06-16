@@ -16,8 +16,8 @@ const index = () => {
             <div className={styles.outerWrapper}>
                 <div className={styles.d1}>
                     <div className={styles.journalismNav}>
-                        <Link href="/">Explore Journalism</Link>
-                        <Link href="/">Create News</Link>
+                        <Link href="/app/news">Explore Journalism</Link>
+                        <Link href="/app/createnews">Create News</Link>
                         <Link href="/">View Your News</Link>
                     </div>
                     <div className={styles.trendingList}>
