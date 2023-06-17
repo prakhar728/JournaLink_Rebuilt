@@ -3,6 +3,7 @@ import { NextPage } from 'next';
 import Navbar from '../components/LandingPage/Navbar';
 import Landing from '../components/LandingPage/Landing';
 import AboutUs from "../components/About/Index";
+import Sponsor from "../components/Sponsors/Index";
 const Home: NextPage = () => {
   return (
     <div>
@@ -18,6 +19,7 @@ const Home: NextPage = () => {
       <Navbar />
       <Landing />
       <AboutUs />
+      <Sponsor />
     </div>
   );
 };
