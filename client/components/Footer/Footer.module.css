@@ -1,0 +1,16 @@
+.FooterWrapper{
+    height: 50vh;
+    overflow: hidden;
+}
+.shapeWrapper{
+    border:2px solid white;
+    width: 100%;
+    position: relative;
+}
+.shapeWrapper img{
+    width: 100%;
+}
+.content{
+    position: absolute;
+    z-index: 2;
+}

@@ -10,11 +10,13 @@ import { createPublicClient, createWalletClient, custom, http } from 'viem';
 import { WalletClient, useAccount } from 'wagmi';
 import { filecoinCalibration } from 'viem/chains';
 import {DaoContractSchema, daoTableName} from "../../../tableland/index";
+import LoadingC from "../../../components/Loading/Index";
 declare var window: any
 
 const Index = () => {
   const [daos, setdaos] = useState<DaoContractSchema[]>([]);
-
+  const [loading, setloading] = useState(true);
+  const [message, setmessage] = useState("");
   const { address, isConnecting, isDisconnected } = useAccount()
   var walletClient: WalletClient;
   if (typeof window === "object") {
@@ -32,16 +34,21 @@ const Index = () => {
   //NOW WE'LL GATHER THE DAOS AVAILABLE TO VIEW
   const db = new Database<DaoContractSchema>();
   const prepareData = async() =>{
+    setmessage("Gathering Daos For You!");
+    setloading(true);
     try {
       const { results } = await db.prepare<DaoContractSchema>(`SELECT * FROM ${daoTableName};`).all();
       console.log(results);
       setdaos(results);
+      setmessage("Storing Daos");
+      setloading(true);
     } catch (error) {
       console.log(error);
-      
+      setmessage("Failed to store dao");
+      setloading(false);
     }
-   
-    
+    setmessage("");
+   setloading(false);
   }
   useEffect(() => {
     prepareData();
@@ -62,6 +69,7 @@ const Index = () => {
           
         </div>
         <div className={styles.daosList}>
+          {loading && <LoadingC message={message}/>}
           {daos.length !=0 && 
           daos.map((dao,index)=>{
             return(

@@ -4,6 +4,7 @@ import Navbar from '../components/LandingPage/Navbar';
 import Landing from '../components/LandingPage/Landing';
 import AboutUs from "../components/About/Index";
 import Sponsor from "../components/Sponsors/Index";
+import Footer from '../components/Footer/Footer';
 const Home: NextPage = () => {
   return (
     <div>
@@ -20,6 +21,7 @@ const Home: NextPage = () => {
       <Landing />
       <AboutUs />
       <Sponsor />
+      <Footer />
     </div>
   );
 };
