@@ -4,9 +4,15 @@ import { useEventListener, useHuddle01 } from '@huddle01/react';
 import { useIsMounted } from '../../../hooks/useIsMounted';
 import { useAudio, useLobby, useVideo } from '@huddle01/react/hooks';
 import { useRouter } from 'next/router';
-
+import styles from "./Record.module.css";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Link from 'next/link';
+import record from "../../../assets/Record.png";
+import Camera from "../../../assets/Camera.png";
+import mic from "../../../assets/Mic.png";
+import exit from "../../../assets/exit.png";
+import Image from 'next/image';
 const index = () => {
     const { initialize, isInitialized } = useHuddle01();
     const { joinLobby, isLobbyJoined, error } = useLobby();
@@ -27,10 +33,10 @@ const index = () => {
             toastId: 'test',
         });
 
-        if (router.query.roomid) {
+        if (typeof router.query.roomid == "string") {
             console.log(router.query.roomid);
-
-            setroomId(roomId);
+            setroomId(router.query.roomid);
+            joinLobby(router.query.roomid);
         }
     }, [router.isReady])
 
@@ -46,7 +52,6 @@ const index = () => {
     useEventListener("lobby:failed", () => {
         // Write your logic here
         console.log("lobby:failed")
-        console.log(error);
         toast("Failed To Join the Lobby", {
             toastId: 'l2',
         })
@@ -120,12 +125,15 @@ const index = () => {
     return (
         <div>
             <Navbar />
-            <div>{isInitialized ? 'Hello World!' : 'Please initialize'}
+            {/* <div>{isInitialized ? 'Hello World!' : 'Please initialize'}
                 <button disabled={!joinLobby.isCallable} onClick={() => {
                     console.log(router.query.roomid);
                     try {
                         if (typeof router.query.roomid == "string")
-                        joinLobby(router.query.roomid);
+                        {
+                            console.log(router.query.roomid);
+                            
+                            joinLobby(router.query.roomid);}
                     } catch (error) {
                         console.log(error);
                     }
@@ -136,12 +144,49 @@ const index = () => {
                     FETCH_AUDIO_STREAM
                 </button>
 
-                {/* Webcam */}
                 <button disabled={!fetchVideoStream.isCallable} onClick={fetchVideoStream}>
                     FETCH_VIDEO_STREAM
-                </button>
-                <ToastContainer />
-            </div >
+                </button> */}
+            <div className={styles.recordOuter}>
+                <div className={styles.smallHeader}>
+                    <div className={styles.goBack}>
+                        <Link href="/app/createnews">
+                            &#60; Go Back
+                        </Link>
+                    </div>
+                    <div className={styles.heading}>
+                        Record Your Video
+                    </div>
+                    <div className={styles.extra}>
+
+                    </div>
+                </div>
+
+                <div className={styles.recordWrapper}>
+                    <div className={styles.recordScreen}>
+
+                    </div>
+                    <div className={styles.button}>
+                        <button>
+                            Start Recording 
+                            <Image src={record} alt="Start Recording" />
+                        </button>
+                        <button>
+                        Start Recording 
+                            <Image src={Camera} alt="Start Camera" />
+                        </button>
+                        <button>
+                        Start Recording 
+                            <Image src={mic} alt="Start Recording" />
+                        </button>
+                        <button>
+                        Start Recording 
+                            <Image src={exit} alt="Start Recording" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <ToastContainer />
         </div >
     )
 }

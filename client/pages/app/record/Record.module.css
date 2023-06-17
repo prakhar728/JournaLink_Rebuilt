@@ -1,0 +1,63 @@
+.recordOuter{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 90vh;
+    align-items: center;
+}
+.smallHeader{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 2vw;
+    height: 10vh;
+    align-items: center;
+    width: 100%;
+}
+.goBack{
+    width: 30%;
+
+}
+.goBack a{
+    color:#FFF;
+    text-decoration: none;
+}
+.heading{
+    font-size: 36px;
+}
+.extra{
+    width: 30%;
+}
+.recordWrapper{
+    border:2px solid #F2E7D4;
+    width: 90%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.recordScreen{
+    width: 80%;
+    height: 80%;
+    background-color: #f2e7d452;
+    border:2px solid #F2E7D4;
+}
+.button{
+    display: flex;
+    justify-content: space-evenly;
+    width: 80%;
+    height: 8%;
+}
+.button button{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    font-size: 24px;
+    background-color: #f994965f;
+    color:#FFF;
+    border:2px solid #B15556;
+    width: 20%;
+    height: 100%;
+    border-radius: 8px;
+}
