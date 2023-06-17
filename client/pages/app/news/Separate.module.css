@@ -1,0 +1,121 @@
+.newsWrapper{
+    border:2px solid #F2E7D4;
+    width: 90%;
+    margin: 4vh auto;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+.goBack{
+    height: 10%;
+    display: flex;
+    align-items: center;
+    padding-left: 1vw;
+    width: 100%;
+   
+}
+.goBack a{
+    color:#FFFFFF;
+    text-decoration: none;
+}
+.upper1{
+    height: 40%;
+    width: 90%;
+    display: flex;
+}
+.left{
+    width: 30%;
+    border-radius: 8px;
+
+}
+.left img{
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+.left video{
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+.right{
+    width: 60%;
+    padding-left: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+.right h2{
+    padding:0;
+    margin: 0;
+    font-size: 36px;
+    font-style: italic;
+}
+.info{
+    display: flex;
+    flex-direction: row;
+    column-gap: 4vw;
+    color:#ffffff91;
+    font-size: 18px;
+}
+.lower{
+    height: 40%;
+    width: 90%;
+    font-size: 24px;
+}
+.likes{
+    color:#ffffff91;
+    font-size: 18px;
+}
+.likeButton button{
+    background-color: #6C6862;
+    border:1px solid #F2E7D4;
+    border-radius: 8px;
+    font-size: 24px;
+    width: 10vw;
+    height: 4vh;
+    color:#FFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.slideshowContainer {
+    width: 400px;
+    height: 300px;
+    position: relative;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    border-radius: 14px;
+  }
+  
+  .slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  .slide.active {
+    opacity: 1;
+  }
+  
+  .slide h2 {
+    margin: 0;
+  }
+  
+  .slideButton {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    background-color: #6c6c6c;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }

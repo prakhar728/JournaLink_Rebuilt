@@ -211,7 +211,7 @@ const index = () => {
             <div className={styles.right}>
               {/* BEGIN THE DUPLICATION */}
               {promptDetails.length != 0 && prompts.length != 0 &&
-                prompts.map((prompt, index) => {
+                prompts.map((prompt, index:number) => {
                   return (
                     <div className={styles.promptWrapper} key={index}>
                       <div className={styles.info1}>

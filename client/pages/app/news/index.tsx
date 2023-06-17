@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../../../components/Navbar'
 import styles from "./NewsDashboard.module.css";
 import Link from 'next/link';
@@ -6,9 +6,27 @@ import Image from 'next/image';
 import upi from "../../../assets/upi.jpg";
 import chess from "../../../assets/Chess.jpg";
 import DynamicBackground from '../../../components/ImageProvider/Index';
+import { useIsMounted } from '../../../hooks/useIsMounted';
+import { Database } from '@tableland/sdk';
+import { newsSchema, newsTableName } from '../../../tableland';
 const index = () => {
+    const mounted = useIsMounted();
+    const [news, setnews] = useState<newsSchema[]>([])
     const url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ667HUYxX5wvnvT3E4uWyTVAiCdfFw0aZJ7ayGQGFI&s";
     const headline = "Carlsen believes India is on track to become a leading chess nation";
+
+    const db = new Database<newsSchema>();
+    const getNews = async () =>{
+      const { results } = await db.prepare<newsSchema>(`SELECT * FROM ${newsTableName}; `).all();
+      console.log(results);
+      setnews(results)
+      
+    }
+    useEffect(() => {
+        if(mounted==true)
+        getNews();
+    }, [mounted])
+    
     return (
         <div>
             <Navbar />
@@ -43,7 +61,12 @@ const index = () => {
                 </div>
                 <div className={styles.d2}>
                     <div className={styles.left}>
-                        <DynamicBackground imageUrl={url} headline={headline} />
+                        {news.length!=0 && news.map((s,i)=>{
+                            return(
+                                <DynamicBackground imageUrl={s.thumbnail} headline={s.headline}  newsid={s.newsID} key={i} />
+
+                            )
+                        })}
                     </div>
 
                     <div className={styles.right}>
