@@ -22,11 +22,13 @@ const index = () => {
     const { fetchAudioStream, stopAudioStream, error: micError } = useAudio();
     const { fetchVideoStream, stopVideoStream, error: camError } = useVideo();
     const huddleKey = process.env.NEXT_PUBLIC_HUDDLE_KEY;
-
+    const {roomid} = router.query;
     useEffect(() => {
         // its preferable to use env vars to store projectId
         if (typeof huddleKey == "string")
-            initialize(huddleKey)
+            {
+                console.log(huddleKey);
+                initialize(huddleKey);}
     }, []);
     useEffect(() => {
         toast("Wow so easy!", {
@@ -36,7 +38,8 @@ const index = () => {
         if (typeof router.query.roomid == "string") {
             console.log(router.query.roomid);
             setroomId(router.query.roomid);
-            joinLobby(router.query.roomid);
+            // if(isInitialized)
+            // joinLobby(router.query.roomid);
         }
     }, [router.isReady])
 
@@ -125,6 +128,7 @@ const index = () => {
     return (
         <div>
             <Navbar />
+            {isInitialized ? 'Hello World!' : 'Please initialize'}
             {/* <div>{isInitialized ? 'Hello World!' : 'Please initialize'}
                 <button disabled={!joinLobby.isCallable} onClick={() => {
                     console.log(router.query.roomid);
@@ -167,6 +171,13 @@ const index = () => {
 
                     </div>
                     <div className={styles.button}>
+                        <button onClick={e=>{
+                           console.log(roomid);
+                           //@ts-ignore
+                            joinLobby(roomid)
+                        }}>
+                            Join Lobby
+                        </button>
                         <button>
                             Start Recording 
                             <Image src={record} alt="Start Recording" />

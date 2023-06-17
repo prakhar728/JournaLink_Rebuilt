@@ -174,17 +174,18 @@ const index = () => {
     try {
         if (process.env.NEXT_PUBLIC_HUDDLE_KEY_API) {
             const HUDDLE_KEY = process.env.NEXT_PUBLIC_HUDDLE_KEY_API;
-
+            console.log(HUDDLE_KEY);
+            
             const response = await axios.post(
-                'https://iriko.testing.huddle01.com/api/v1/create-room',
+                'https://api.huddle01.com/api/v1/create-room',
                 {
-                    title: 'Personal Cam',
+                    title: 'Recording Video for News',
                     hostWallets: [address],
                 },
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        'x-api-key': HUDDLE_KEY,
+                        'x-api-key': 'HBUwrTzM39K8BSQAWucFOZBZ_0-jsyWN',
                     },
                 }
             );

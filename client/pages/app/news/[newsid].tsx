@@ -8,6 +8,9 @@ import { newsSchema, newsTableName } from '../../../tableland';
 import Image from 'next/image';
 import heart from "../../../assets/Heart.png";
 import { useAccount } from 'wagmi';
+import { createPublicClient, http } from 'viem';
+import { mainnet } from 'viem/chains';
+import { normalize } from 'viem/ens';
 const index = () => {
   const router = useRouter();
   const { address } = useAccount();
@@ -15,9 +18,32 @@ const index = () => {
   const [news, setnews] = useState<newsSchema[]>([])
   const db = new Database<newsSchema>();
   const [activeSlide, setActiveSlide] = useState(1);
+  const publicClient = createPublicClient({
+    chain:mainnet ,
+    transport: http()
+  })
   const getNews = async (newsid: string) => {
     const { results } = await db.prepare<newsSchema>(`SELECT * FROM ${newsTableName} WHERE newsID=${newsid}  ; `).all();
     console.log(results);
+try {
+  const ensName = await publicClient.getEnsName({
+    address: `0x${results[0].creatoraddress.substring(2,)}`,
+    })
+    console.log(ensName);
+    if(ensName)
+    {
+      results[0].creatoraddress = ensName;
+      // const ensText = await publicClient.getEnsAvatar({
+      //   name: normalize('wagmi-dev.eth'),
+      // })
+      
+    }
+    
+} catch (error) {
+  console.log(error);
+  
+}
+    
     setnews(results)
     console.log((new Date(parseInt(results[0].DOC))).toLocaleString());
 
@@ -58,7 +84,7 @@ const index = () => {
     }
   }
   const handleSlideChange = () => {
-    setActiveSlide(activeSlide === 1 && news[0].videoURL!=""  ? 2 : 1);
+    setActiveSlide(activeSlide === 1 && news[0].videoURL != "" ? 2 : 1);
   };
 
   return (
@@ -84,10 +110,10 @@ const index = () => {
                   </video>
                 </div>
                 <button className={styles.slideButton} onClick={handleSlideChange}>
-                &#60;
+                  &#60;
                 </button>
               </div>
-              
+
             </div>
             <div className={styles.right}>
               <h2><q>{news[0].headline}</q></h2>
