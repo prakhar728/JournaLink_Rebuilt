@@ -26,6 +26,12 @@ export interface DaoContractSchema {
   likes:number,
   DOC:string
  }
+ export interface UserSchema{
+  address:string,
+  quote:string,
+  liveLink:string
+ }
  export const daoTableName="dao_table_314159_223";
  export const promptTableName="prompt_table_314159_224";
  export const newsTableName= "news_table_314159_198";
+ export const userTableName = "user_table_314159_238"

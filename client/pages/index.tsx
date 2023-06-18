@@ -21,7 +21,7 @@ const Home: NextPage = () => {
       <Landing />
       <AboutUs />
       <Sponsor />
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
