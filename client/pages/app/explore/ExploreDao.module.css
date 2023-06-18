@@ -8,6 +8,9 @@
     align-items: center;
     justify-content: space-between;
 }
+.daoWrapper button{
+    cursor: pointer;
+}
 .nav{
     width: 90%;
     display: flex;

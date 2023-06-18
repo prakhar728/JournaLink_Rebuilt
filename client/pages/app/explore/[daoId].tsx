@@ -2,27 +2,25 @@ import React, { useEffect, useState } from 'react'
 import styles from "./ExploreDao.module.css"
 import Navbar from '../../../components/Navbar'
 import Link from 'next/link';
-import logoDao from "../../../assets/DaoDemo.png";
 import Image from 'next/image';
 import { useIsMounted } from '../../../hooks/useIsMounted';
 import lighthouse from '@lighthouse-web3/sdk';
 import { useRouter } from 'next/router';
-import { WalletClient, createPublicClient, createWalletClient, custom, getContract, http } from 'viem';
+import { BaseError, ContractFunctionRevertedError, WalletClient, createPublicClient, createWalletClient, custom,  http } from 'viem';
 import { filecoinCalibration } from 'viem/chains';
 import { Database } from '@tableland/sdk';
 import { DaoContractSchema, daoTableName, promptSchema, promptTableName } from '../../../tableland';
 import downloadButton from "../../../assets/DownloadButton.svg";
-import { useAccount, useContractRead } from 'wagmi';
+import { useAccount} from 'wagmi';
 import daoAbi from "../../../assets/contractData/Dao.json";
-import help from "../../../helper/help";
+import LoadingC from "../../../components/Loading/Index";
+import ErrorComponent from "../../../components/Error/Index";
 declare var window: any
 
 const index = () => {
   // HOOKS FOR NEXTJS INITIALISATION
-  const mounted = useIsMounted();
   const router = useRouter();
   const { address } = useAccount();
-  const [daoAddress, setdaoAddress] = useState<String>("")
   const [daoInfo, setdaoInfo] = useState<DaoContractSchema[]>([])
   const [prompts, setprompts] = useState<promptSchema[]>([]);
   const [promptDetails, setpromptDetails] = useState([]);
@@ -30,6 +28,10 @@ const index = () => {
   const [contributonData, setContributionData] = useState("");
   const [showContributions, setshowContributions] = useState(false);
   const [contributionsOfAPrompt, setcontributionsOfAPrompt] = useState([]);
+  const [loading, setloading] = useState(false);
+  const [mesage, setmesage] = useState("");
+  const [errorStatus, seterrorStatus] = useState(false);
+  const [errorMessage, seterrorMessage] = useState("")
   const lighthouseKey = process.env.NEXT_PUBLIC_LIGHTHOUSE_KEY;
 
   // ENAB
@@ -74,10 +76,13 @@ const index = () => {
       arr.push(data);
     }
     console.log(arr);
+    setloading(false);
+    setmesage("");
     //@ts-ignore
     setpromptDetails(arr);
   }
   const fetchPrompts = async () => {
+    setmesage("Now loading Available Prompts");
     try {
       if (typeof router.query.daoId == "string") {
 
@@ -86,18 +91,18 @@ const index = () => {
         const { results } = await db.prepare<promptSchema>(`SELECT * FROM ${promptTableName} WHERE contractaddress=${addRress} `).all();
         setprompts(results);
         console.log(results);
+        setmesage("Syncing with Smart Contract");
         fetchDetailForEveryPrompt(results);
       }
     } catch (error) {
       console.log(error);
-
+      setloading(false);
     }
 
 
   }
   const fetchDaoInfo = async () => {
     if (router.query.daoId && typeof router.query.daoId == "string") {
-      setdaoAddress(`"${router.query.daoId}"`)
       const addRress = `"${router.query.daoId}"`;
       const { results } = await db.prepare<DaoContractSchema>(`SELECT * FROM ${daoTableName} WHERE address =${addRress} `).all();
       setdaoInfo(results);
@@ -106,6 +111,8 @@ const index = () => {
     }
   }
   useEffect(() => {
+    setmesage("Loading Dao");
+    setloading(true);
     fetchDaoInfo();
   }, [router.isReady])
 
@@ -128,34 +135,66 @@ const index = () => {
     }
   }
   const contributeThis = async (proposalId: string) => {
+    setloading(true);
+    setmesage("Contributing  Data")
     if (contributonData != "") {
       if (typeof router.query.daoId == "string") {
         const contractAddress = router.query.daoId;
-        const { request } = await publicClient.simulateContract({
-          account: address,
-          address: `0x${contractAddress.substring(2,)}`,
-          abi: daoAbi.abi,
-          functionName: 'commitData',
-          args: [proposalId, contributonData]
-        })
-        await walletClient.writeContract(request)
+        try {
+    setmesage("Approve the Transaction in your wallet");
+          const { request } = await publicClient.simulateContract({
+            account: address,
+            address: `0x${contractAddress.substring(2,)}`,
+            abi: daoAbi.abi,
+            functionName: 'commitData',
+            args: [proposalId, contributonData]
+          })
+          await walletClient.writeContract(request)
+        } catch (err) {
+          setloading(false);
+        setmesage("");
+        //@ts-ignore
+       console.log(JSON.parse((JSON.stringify(err))).details);
+       seterrorMessage(JSON.parse((JSON.stringify(err))).details);
+       seterrorStatus(true);
+       
+      }
+      setloading(false);
+      setmesage("");
+        
       }
 
     }
   }
   const rewardMembers = async (proposalId:string) =>{
     console.log('Members are being Rewarded');
+    setloading(true);
+    setmesage("Rewarding members.")
     if (typeof router.query.daoId == "string") {
       const contractAddress = router.query.daoId;
-      const { request } = await publicClient.simulateContract({
-        account: address,
-        address: `0x${contractAddress.substring(2,)}`,
-        abi: daoAbi.abi,
-        functionName: 'rewardMembers',
-        args: [proposalId]
-      })
-      await walletClient.writeContract(request)
-      console.log("Rewarded");
+      try {
+    setmesage("Approve the Transaction in your wallet");
+        const { request } = await publicClient.simulateContract({
+          account: address,
+          address: `0x${contractAddress.substring(2,)}`,
+          abi: daoAbi.abi,
+          functionName: 'rewardMembers',
+          args: [proposalId]
+        })
+        await walletClient.writeContract(request)
+       setmesage("Processing the Tx please wait!")
+        console.log("Rewarded");
+      } catch (err:any) {
+        setloading(false);
+        setmesage("");
+        //@ts-ignore
+       console.log(JSON.parse((JSON.stringify(err))).details);
+       seterrorMessage(JSON.parse((JSON.stringify(err))).details);
+       seterrorStatus(true);
+       
+      }
+      setloading(false);
+      setmesage("");
       
     }
   }
@@ -191,6 +230,8 @@ const index = () => {
   return (
     <div>
       <Navbar />
+      {loading && <LoadingC message={mesage} />}
+      {errorStatus && <ErrorComponent message={errorMessage} setErrorStatus={seterrorStatus}/>}
       {(daoInfo.length != 0) &&
         <div className={styles.daoWrapper}>
           <div className={styles.nav}>
@@ -271,18 +312,6 @@ const index = () => {
                   )
                 })
               }
-              {/* <div className={styles.promptWrapper}>
-                <div className={styles.info1}>
-                  <div> Valid Till - 31/05/2002</div>
-                  <div> 123456789</div>
-                </div>
-                <div className={styles.info2}>“Social media: Does it bring people together or create division?”</div>
-                <div className={styles.info3}>Social media is a subject of debate,  whether it bridges or fractures connections. Express your opinion regarding the same.</div>
-                <div className={styles.info4}>
-                  <Link href="/"><button>Requirements <Image src={downloadButton} alt="Download Requirements" /></button></Link>
-                  <Link href="/"><button>Contribute</button></Link>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

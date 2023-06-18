@@ -3,7 +3,6 @@ import styles from "./Explore.module.css";
 import Navbar from '../../../components/Navbar';
 import Link from 'next/link';
 import Image from 'next/image';
-import DaoDemo from "../../../assets/DaoDemo.png";
 import DaoNav from "../../../components/DaoDashboardNav.tsx/Index";
 import { Database } from '@tableland/sdk';
 import { createPublicClient, createWalletClient, custom, http } from 'viem';
