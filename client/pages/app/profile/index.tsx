@@ -8,7 +8,7 @@ import { useAccount } from 'wagmi';
 import { useIsMounted } from '../../../hooks/useIsMounted';
 import { useRouter } from 'next/router';
 import { Database } from '@tableland/sdk';
-import { UserSchema, userTableName } from '../../../tableland';
+import { UserSchema, newsSchema, newsTableName, userTableName } from '../../../tableland';
 import { WalletClient, createPublicClient, createWalletClient, custom, http } from 'viem';
 import { filecoinCalibration, mainnet } from 'viem/chains';
 import { normalize } from 'viem/ens';
@@ -23,6 +23,7 @@ const index = () => {
   const [ensAvatar, setensAvatar] = useState("");
   const [aboutThem, setaboutThem] = useState<UserSchema[]>([]);
   const [ensNNAME, setensNNAME] = useState("address");
+  const [news, setnews] = useState<newsSchema[]>([])
   const getProfile = async (address: string) => {
     console.log("here's the profile");
     setensAvatar(`https://effigy.im/a/${address}.png`);
@@ -93,14 +94,19 @@ const index = () => {
       }
     }
   }
+  const getNews = async() =>{
+    const { results } = await db.prepare<newsSchema>(`SELECT * FROM ${newsTableName} WHERE creatoraddress="${router.query.address}" ;`).all();
+        console.log(`SELECT * FROM ${userTableName} WHERE address="${router.query.address}" `);
+        console.log(results);
+        setnews(results);
+  }
   useEffect(() => {
     if (router.isReady  ) {
       if(typeof router.query.address == "string")
       setensNNAME(router.query.address.substring(0,4)+"..."+router.query.address.substring(38,));
       getUserInfo();
+      getNews();
     }
-
-
   }, [router.isReady])
 
 
@@ -156,7 +162,13 @@ const index = () => {
           <div className={styles.list}>
             News
             <div className={styles.newsList}>
-              "Random Text"
+              {news.length!=0 && news.map((n,i)=>{
+                return(
+                  <p key={i}>
+                    "{n.headline}"
+                  </p>
+                )
+              })}
             </div>
           </div>
         </div>
