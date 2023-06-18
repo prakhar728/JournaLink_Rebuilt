@@ -36,7 +36,6 @@ const index = () => {
                     <div className={styles.journalismNav}>
                         <Link href="/app/news">Explore Journalism</Link>
                         <Link href="/app/createnews">Create News</Link>
-                        <Link href="/">View Your News</Link>
                     </div>
                     <div className={styles.trendingList}>
                         <h2>Trending News</h2>

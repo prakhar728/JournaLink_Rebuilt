@@ -8,9 +8,12 @@ import { newsSchema, newsTableName } from '../../../tableland';
 import Image from 'next/image';
 import heart from "../../../assets/Heart.png";
 import { useAccount } from 'wagmi';
-import { createPublicClient, http } from 'viem';
-import { mainnet } from 'viem/chains';
+import { WalletClient, createPublicClient, createWalletClient, custom, http, parseUnits } from 'viem';
+import { filecoinCalibration, mainnet } from 'viem/chains';
 import { normalize } from 'viem/ens';
+
+declare var window: any
+
 const index = () => {
   const router = useRouter();
   const { address } = useAccount();
@@ -22,6 +25,13 @@ const index = () => {
     chain:mainnet ,
     transport: http()
   })
+  var walletClient: WalletClient;
+  if (typeof window === "object") {
+    walletClient = createWalletClient({
+      chain: filecoinCalibration,
+      transport: custom(window.ethereum)
+    })
+  }
   const getNews = async (newsid: string) => {
     const { results } = await db.prepare<newsSchema>(`SELECT * FROM ${newsTableName} WHERE newsID=${newsid}  ; `).all();
     console.log(results);
@@ -67,6 +77,12 @@ try {
 
     try {
       if (address) {
+        //@ts-ignore
+        const hash = await walletClient.sendTransaction({ 
+          account:address,
+          to: `0x${(news[0].creatoraddress).substring(2,)}`,
+          value:BigInt(parseUnits('1',18))
+        })
         const { meta: insert } = await db
           .prepare(
             `UPDATE ${newsTableName}

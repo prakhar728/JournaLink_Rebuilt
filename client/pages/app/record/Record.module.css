@@ -43,6 +43,10 @@
     background-color: #f2e7d452;
     border:2px solid #F2E7D4;
 }
+.recordScreen video{
+    height: 100%;
+    width: 100%;
+}
 .button{
     display: flex;
     justify-content: space-evenly;

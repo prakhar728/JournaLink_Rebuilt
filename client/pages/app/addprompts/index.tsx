@@ -62,7 +62,7 @@ const Index = () => {
     const randomSixDigitNumber = parseInt(randomBytesBuffer.toString('hex'), 16)
       .toString()
       .slice(0, 6);
-  
+
     return randomSixDigitNumber;
   }
 
@@ -72,23 +72,11 @@ const Index = () => {
     Hash: String,
     Size: String
   }
-  // const test = async () =>{
-  //   if(lighthouseKey){
-  //     const response = await lighthouse.uploadText(
-  //       "This is a string",
-  //       lighthouseKey
-  //     );
-
-  //     console.log(response);
-
-  //   }
-
-  // }
   // const prepareDB = async () => {
   //   const prefix: string = "prompt_table";
 
   //   const { meta: create } = await db
-  //     .prepare(`CREATE TABLE ${prefix} (promptid text primary key, contractaddress text,heading text,description text)`)
+  //     .prepare(`CREATE TABLE ${prefix} (promptid text primary key, contractaddress text,heading text,description text, DOE text)`)
   //     .run();
   //   console.log(create.txn?.name);
   // }
@@ -128,29 +116,30 @@ const Index = () => {
         console.log('Unique id for prompt', promptId);
         const amt = parseInt(formData.amount);
         console.log(contractAddress);
-        
+
         const hash = await walletClient.writeContract({
           address: `0x${contractAddress}`,
           abi: daoContractData.abi,
           functionName: 'createProposal',
-          args: [promptId, formData.fileURL,parseInt(formData.capacity),parseUnits(`${amt}`,18) ],
+          args: [promptId, formData.fileURL, parseInt(formData.capacity), parseUnits(`${amt}`, 18)],
           account: address,
           // @ts-ignore
-          value:parseUnits(`${amt}`,18)
+          value: parseUnits(`${amt}`, 18)
         })
-        
+
         setmessage("Prompt Uploaded to Contract" + hash);
         setloading(false);
 
         const { meta: insert } = await db
           .prepare(
-            `INSERT INTO ${promptTableName} (promptid , contractaddress, heading,description  ) VALUES (?,?,?,?);`
+            `INSERT INTO ${promptTableName} (promptid , contractaddress, heading,description, DOE   ) VALUES (?,?,?,?,?);`
           )
           .bind(
             promptId,
             `0x${contractAddress}`,
             formData.heading,
-            formData.Description
+            formData.Description,
+            formData.DOE
           )
           .run()
         await insert.txn?.wait();
@@ -219,12 +208,12 @@ const Index = () => {
             <div className={styles.innerForm}>
               <div className={styles.formLeft}>
                 <input type="text" placeholder='Your Heading' value={formData.heading
-                } onChange={(e)=>{
-                  setFormData({...formData,heading:e.target.value})
+                } onChange={(e) => {
+                  setFormData({ ...formData, heading: e.target.value })
                 }} />
                 <textarea placeholder='Add Description' rows={8} value={formData.Description
-                } onChange={(e)=>{
-                  setFormData({...formData,Description:e.target.value})
+                } onChange={(e) => {
+                  setFormData({ ...formData, Description: e.target.value })
                 }} />
                 <div className={styles.file}>
                   <input type="file" onChange={handleFileChange} />
@@ -241,28 +230,33 @@ const Index = () => {
               </div>
               <div className={styles.formRight}>
                 <input type="text" placeholder='Amount of pool prize' value={formData.amount
-                } onChange={(e)=>{
-                  setFormData({...formData,amount:e.target.value})
+                } onChange={(e) => {
+                  setFormData({ ...formData, amount: e.target.value })
                 }} />
                 <div className={styles.DOE}>
                   Date of Expiration
                   <input type="datetime-local" className={styles.inputDate} placeholder="Date of expiration" value={formData.DOE
-                } onChange={(e)=>{
-                  setFormData({...formData,DOE:e.target.value})
-                }}/>
+                  } onChange={(e) => {
+                    var someDate = new Date(e.target.value);
+                    //@ts-ignore
+                    someDate = someDate.getTime();
+                    console.log(someDate);
+                    
+                    setFormData({ ...formData, DOE: `${someDate}` })
+                  }} />
                 </div>
                 <div className={styles.memberCapacity} >
                   Member Capacity
                   <input value={formData.capacity
-                } onChange={(e)=>{
-                  setFormData({...formData,capacity:e.target.value})
-                }}/>
+                  } onChange={(e) => {
+                    setFormData({ ...formData, capacity: e.target.value })
+                  }} />
                 </div>
 
               </div>
             </div>
 
-          <button className={styles.submit} onClick={handleClick}>Submit</button>
+            <button className={styles.submit} onClick={handleClick}>Submit</button>
           </form>
         </div>
       </div>

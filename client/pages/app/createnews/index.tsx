@@ -175,6 +175,7 @@ const index = () => {
         if (process.env.NEXT_PUBLIC_HUDDLE_KEY_API) {
             const HUDDLE_KEY = process.env.NEXT_PUBLIC_HUDDLE_KEY_API;
             console.log(HUDDLE_KEY);
+            console.log(address);
             
             const response = await axios.post(
                 'https://api.huddle01.com/api/v1/create-room',
@@ -185,7 +186,7 @@ const index = () => {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        'x-api-key': 'HBUwrTzM39K8BSQAWucFOZBZ_0-jsyWN',
+                        'x-api-key': HUDDLE_KEY,
                     },
                 }
             );

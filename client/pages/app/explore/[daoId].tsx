@@ -149,7 +149,17 @@ const index = () => {
             functionName: 'commitData',
             args: [proposalId, contributonData]
           })
-          await walletClient.writeContract(request)
+          await walletClient.writeContract(request);
+          const memberCount = daoInfo[0].memberCount+1;
+          const addRress = `"${router.query.daoId}"`;
+          const { meta: insert } = await db
+          .prepare(
+            `UPDATE ${daoTableName}
+            SET memberCount =${memberCount}
+            WHERE address =${addRress}`
+          )
+          .run()
+        await insert.txn?.wait();
         } catch (err) {
           setloading(false);
         setmesage("");
@@ -256,7 +266,7 @@ const index = () => {
                   return (
                     <div className={styles.promptWrapper} key={index}>
                       <div className={styles.info1}>
-                        <div> Valid Till - 31/05/2002</div>
+                        <div> Valid Till - {prompt.DOE}</div>
                         <div> {prompt.promptid}</div>
                       </div>
                       <div className={styles.info2}>{prompt.heading}</div>

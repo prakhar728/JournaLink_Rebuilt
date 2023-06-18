@@ -14,6 +14,7 @@ import daoContractAddress from "../../../assets/contractData/Dao-address.json";
 import lighthouse from '@lighthouse-web3/sdk';
 import { DaoContractSchema, daoTableName } from '../../../tableland';
 import { useIsMounted } from '../../../hooks/useIsMounted';
+import Link from 'next/link';
 
 declare var window: any
 const Index = () => {
@@ -35,13 +36,11 @@ const Index = () => {
   const [imageURL, setimageURL] = useState("")
 
   // THESE ARE HOOKS TO INITIATE WALLET CONNECTION AND MANAGE DEPLOYMENT ON CLIENT SIDE
-  // var t=0;
   // const prepareDB = async () => {
-  //   t++;
   //   const prefix: string = "dao_table";
 
   //   const { meta: create } = await db
-  //     .prepare(`CREATE TABLE ${prefix} (address text primary key, name text,heading text,memberCount integer,additionalInfo text,thumbnail text);`)
+  //     .prepare(`CREATE TABLE ${prefix} (address text primary key, name text,heading text,memberCount integer,additionalInfo text,thumbnail text,DOE text,totalRewarded text);`)
   //     .run();
   //     console.log(create);
       
@@ -149,6 +148,9 @@ const Index = () => {
         <div className={styles.daoFormContainer2}></div>
         {/* THE MAIN CONTAINER TO WRITE STUFF */}
         <div className={styles.daoFormContainer3}>
+          <div className={styles.goback}>
+           <Link href="/app/explore">&#60; Go Back</Link>
+          </div>
           <div className={styles.daoFormNavbar}>
             <div className={styles.daoFormNavbarUpper}>
               <div className={styles.upperLeft}>

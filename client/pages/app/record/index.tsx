@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Navbar from '../../../components/Navbar'
 import { useEventListener, useHuddle01 } from '@huddle01/react';
 import { useIsMounted } from '../../../hooks/useIsMounted';
-import { useAudio, useLobby, useVideo } from '@huddle01/react/hooks';
+import { useAudio, useLobby, useRecording, useRoom, useVideo } from '@huddle01/react/hooks';
 import { useRouter } from 'next/router';
 import styles from "./Record.module.css";
 import { ToastContainer, toast } from 'react-toastify';
@@ -12,30 +12,43 @@ import record from "../../../assets/Record.png";
 import Camera from "../../../assets/Camera.png";
 import mic from "../../../assets/Mic.png";
 import exit from "../../../assets/exit.png";
+import { Audio, Video } from '@huddle01/react/components';
 import Image from 'next/image';
 const index = () => {
     const { initialize, isInitialized } = useHuddle01();
     const { joinLobby, isLobbyJoined, error } = useLobby();
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const { stream: videoStream } = useVideo();
+    const { stream: audioStream } = useAudio();
     const router = useRouter()
     const mounted = useIsMounted();
     const [roomId, setroomId] = useState("");
-    const { fetchAudioStream, stopAudioStream, error: micError } = useAudio();
-    const { fetchVideoStream, stopVideoStream, error: camError } = useVideo();
+    const { fetchAudioStream, stopAudioStream, error: micError,produceAudio, stopProducingAudio  } = useAudio();
+    const { fetchVideoStream, stopVideoStream, error: camError , produceVideo, stopProducingVideo } = useVideo();
+    const {
+        startRecording,
+        stopRecording,
+        isStarting,
+        inProgress,
+        isStopping,
+        error: RecordingError,
+        data: recordingData,
+    } = useRecording();
+    const { joinRoom, leaveRoom } = useRoom();
     const huddleKey = process.env.NEXT_PUBLIC_HUDDLE_KEY;
-    const {roomid} = router.query;
-    useEffect(() => {
-        // its preferable to use env vars to store projectId
-        if (typeof huddleKey == "string")
-            {
-                console.log(huddleKey);
-                initialize(huddleKey);}
-    }, []);
+    const { roomid } = router.query;
+
     useEffect(() => {
         toast("Wow so easy!", {
             toastId: 'test',
         });
 
         if (typeof router.query.roomid == "string") {
+            if (typeof huddleKey == "string") {
+                console.log(huddleKey);
+                initialize(huddleKey);
+            }
+
             console.log(router.query.roomid);
             setroomId(router.query.roomid);
             // if(isInitialized)
@@ -43,6 +56,32 @@ const index = () => {
         }
     }, [router.isReady])
 
+    //AUTOMATIC LOBBY JOIN
+    useEffect(() => {
+        if (isInitialized)
+            //@ts-ignore
+            joinLobby(roomid)
+    }, [isInitialized])
+
+    //FETCH VIDEO STREAM
+    useEffect(() => {
+        if (fetchVideoStream.isCallable == true)
+            fetchVideoStream();
+
+    }, [fetchVideoStream])
+
+    //FETCH AUDIO STREAM
+    useEffect(() => {
+        if (fetchAudioStream.isCallable == true)
+            fetchAudioStream();
+
+    }, [fetchAudioStream])
+
+
+    // JOIN ROOM AUTOMATICALLY
+  
+
+ 
     // EVENT LISTENERS FOR HUDDLE
     useEventListener("lobby:joined", () => {
         // Write your logic here
@@ -64,6 +103,8 @@ const index = () => {
     useEventListener("lobby:cam-on", () => {
         // Write your logic here
         console.log("lobby:cam-on")
+        if (videoStream && videoRef.current) 
+        videoRef.current.srcObject = videoStream;
         toast("Camera is Turned On", {
             toastId: 'l3',
         })
@@ -98,7 +139,7 @@ const index = () => {
         console.log("room:joined")
         toast("Room Joined", {
             toastId: 'l7',
-        })
+        });
     })
     //FAILED TO JOIN ROOM
     useEventListener("room:failed", () => {
@@ -118,11 +159,16 @@ const index = () => {
     })
     //STOP MEET RECORD
     useEventListener("room:recording-stopped", () => {
+        console.log(recordingData);
+        localStorage.setItem("recordingData", JSON.stringify(recordingData));
         // Write your logic here
         console.log("room:recording-stopped")
         toast("Stopped the recording of this meet", {
             toastId: 'l9',
         })
+        setTimeout(() => {
+            router.push("/app/createnews")
+        }, 3000)
     })
 
     return (
@@ -168,30 +214,30 @@ const index = () => {
 
                 <div className={styles.recordWrapper}>
                     <div className={styles.recordScreen}>
-
+                    <video ref={videoRef} autoPlay muted id="videoStream"></video>
                     </div>
                     <div className={styles.button}>
-                        <button onClick={e=>{
-                           console.log(roomid);
-                           //@ts-ignore
-                            joinLobby(roomid)
-                        }}>
-                            Join Lobby
-                        </button>
-                        <button>
-                            Start Recording 
+                    <button onClick={joinRoom}>
+                            Join Room
                             <Image src={record} alt="Start Recording" />
                         </button>
-                        <button>
-                        Start Recording 
+                        <button onClick={e=>produceVideo(videoStream)}>
+                            Start Camera
                             <Image src={Camera} alt="Start Camera" />
                         </button>
-                        <button>
-                        Start Recording 
-                            <Image src={mic} alt="Start Recording" />
+                        <button onClick={e=>produceVideo(audioStream)} >
+                            Start Mic
+                            <Image src={mic} alt="Start Mic" />
                         </button>
-                        <button>
-                        Start Recording 
+                        <button onClick={() => {
+                                console.log(`${process.env.NEXT_PUBLIC_BASE_URL}app/rec?roomId=${roomid}`);
+                                startRecording(`${process.env.NEXT_PUBLIC_BASE_URL}app/rec?roomId=${roomid}`)
+                            }}>
+                            Start Recording
+                            <Image src={record} alt="Start Recording" />
+                        </button>
+                        <button onClick={stopRecording}>
+                            End Recording
                             <Image src={exit} alt="Start Recording" />
                         </button>
                     </div>

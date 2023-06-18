@@ -45,6 +45,13 @@
     border-radius: 0px 0px 30px 30px;
     border:2px solid black;
 }
+.goback{
+    width: 90%;
+}
+.goback a{
+    color:black;
+    text-decoration: none;
+}
 .daoFormNavbar{
     border:2px solid black;
     width: 80%;
