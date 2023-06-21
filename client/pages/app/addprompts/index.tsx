@@ -27,7 +27,6 @@ const Index = () => {
   const [message, setmessage] = useState("");
   const { address } = useAccount();
   const [selectedFile, setSelectedFile] = useState<File>();
-  const mounted = useIsMounted();
   const [contractAddress, setContractAddress] = useState("")
   const router = useRouter();
   const handleFileChange = (event: any) => {
@@ -45,17 +44,30 @@ const Index = () => {
     DOE: "",
     capacity: ""
   })
-  const getDaoAddress = async () => {
-    if (typeof router.query.contractAddress == "string") {
-      const address = router.query.contractAddress.substring(2,);
-      setContractAddress(address);
-      console.log(address);
-    }
-  }
+  
   useEffect(() => {
-    getDaoAddress();
-
-  }, [mounted])
+    console.log("This working?");
+    
+      const getDaoAddress = async () => {
+        try {
+          if (typeof router.query.contractAddress == "string") {
+            const address = router.query.contractAddress.substring(2,);
+            setContractAddress(address);
+            console.log(address);
+          }
+        } catch (error) {
+          console.log(error);
+          
+        }
+        
+      }
+    
+ 
+    if (typeof window !== 'undefined') {
+      getDaoAddress();
+    }  
+    // eslint-disable-next-line react-hooks/exhaustive-deps 
+  }, [router.query.contractAddress])
 
   function generateRandomNumber(): string {
     const randomBytesBuffer = randomBytes(8);

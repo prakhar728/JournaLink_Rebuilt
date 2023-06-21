@@ -7,7 +7,7 @@ import { UserSchema } from '../../../tableland';
 import { Database } from '@tableland/sdk';
 import { userTableName } from '../../../tableland';
 import { useRouter } from 'next/router';
-const index = () => {
+const Index = () => {
     const [formData, setformData] = useState({
         quote:"",
         meet:""
@@ -91,4 +91,4 @@ try {
   )
 }
 
-export default index
+export default Index

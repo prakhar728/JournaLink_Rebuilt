@@ -14,7 +14,7 @@ import mic from "../../../assets/Mic.png";
 import exit from "../../../assets/exit.png";
 import { Audio, Video } from '@huddle01/react/components';
 import Image from 'next/image';
-const index = () => {
+const Index = () => {
     const { initialize, isInitialized } = useHuddle01();
     const { joinLobby, isLobbyJoined, error } = useLobby();
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -23,8 +23,8 @@ const index = () => {
     const router = useRouter()
     const mounted = useIsMounted();
     const [roomId, setroomId] = useState("");
-    const { fetchAudioStream, stopAudioStream, error: micError,produceAudio, stopProducingAudio  } = useAudio();
-    const { fetchVideoStream, stopVideoStream, error: camError , produceVideo, stopProducingVideo } = useVideo();
+    const { fetchAudioStream, stopAudioStream, error: micError, produceAudio, stopProducingAudio } = useAudio();
+    const { fetchVideoStream, stopVideoStream, error: camError, produceVideo, stopProducingVideo } = useVideo();
     const {
         startRecording,
         stopRecording,
@@ -35,17 +35,17 @@ const index = () => {
         data: recordingData,
     } = useRecording();
     const { joinRoom, leaveRoom } = useRoom();
-    const huddleKey = process.env.NEXT_PUBLIC_HUDDLE_KEY;
     const { roomid } = router.query;
 
     useEffect(() => {
         toast("Wow so easy!", {
             toastId: 'test',
         });
-
+        const huddleKey = process.env.NEXT_PUBLIC_HUDDLE_KEY;
         if (typeof router.query.roomid == "string") {
             if (typeof huddleKey == "string") {
                 console.log(huddleKey);
+                // eslint-disable-next-line 
                 initialize(huddleKey);
             }
 
@@ -54,14 +54,15 @@ const index = () => {
             // if(isInitialized)
             // joinLobby(router.query.roomid);
         }
-    }, [router.isReady])
+    }, [router.query.roomid,initialize])
 
     //AUTOMATIC LOBBY JOIN
     useEffect(() => {
         if (isInitialized)
             //@ts-ignore
+             // eslint-disable-next-line react-hooks/exhaustive-deps
             joinLobby(roomid)
-    }, [isInitialized])
+    }, [isInitialized, roomid,joinLobby])
 
     //FETCH VIDEO STREAM
     useEffect(() => {
@@ -79,9 +80,9 @@ const index = () => {
 
 
     // JOIN ROOM AUTOMATICALLY
-  
 
- 
+
+
     // EVENT LISTENERS FOR HUDDLE
     useEventListener("lobby:joined", () => {
         // Write your logic here
@@ -103,8 +104,8 @@ const index = () => {
     useEventListener("lobby:cam-on", () => {
         // Write your logic here
         console.log("lobby:cam-on")
-        if (videoStream && videoRef.current) 
-        videoRef.current.srcObject = videoStream;
+        if (videoStream && videoRef.current)
+            videoRef.current.srcObject = videoStream;
         toast("Camera is Turned On", {
             toastId: 'l3',
         })
@@ -214,22 +215,22 @@ const index = () => {
 
                 <div className={styles.recordWrapper}>
                     <div className={styles.recordScreen}>
-                    <video ref={videoRef} autoPlay muted id="videoStream"></video>
+                        <video ref={videoRef} autoPlay muted id="videoStream"></video>
                     </div>
                     <div className={styles.button}>
-                    <button onClick={joinRoom}>
+                        <button onClick={joinRoom}>
                             Join Room
                             <Image src={record} alt="Start Recording" />
                         </button>
-                        <button onClick={e=>produceVideo(videoStream)}>
+                        <button onClick={e => produceVideo(videoStream)}>
                             Start Camera
                             <Image src={Camera} alt="Start Camera" />
                         </button>
-                        <button onClick={e=>produceVideo(audioStream)} >
+                        <button onClick={e => produceVideo(audioStream)} >
                             Start Mic
                             <Image src={mic} alt="Start Mic" />
                         </button>
-                      
+
                     </div>
                 </div>
             </div>
@@ -238,4 +239,4 @@ const index = () => {
     )
 }
 
-export default index
+export default Index

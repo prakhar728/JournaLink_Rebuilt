@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styles from "./Explore.module.css";
 import Navbar from '../../../components/Navbar';
 import Link from 'next/link';
@@ -31,27 +31,33 @@ const Index = () => {
   })
 
   //NOW WE'LL GATHER THE DAOS AVAILABLE TO VIEW
-  const db = new Database<DaoContractSchema>();
-  const prepareData = async() =>{
-    setmessage("Gathering Daos For You!");
-    setloading(true);
-    try {
-      const { results } = await db.prepare<DaoContractSchema>(`SELECT * FROM ${daoTableName};`).all();
-      console.log(results);
-      setdaos(results);
-      setmessage("Storing Daos");
-      setloading(true);
-    } catch (error) {
-      console.log(error);
-      setmessage("Failed to store dao");
-      setloading(false);
-    }
-    setmessage("");
-   setloading(false);
-  }
+   //PREPARING TABLELAND
+   const db = useMemo(() => {
+    // Construct the `db` object here
+    return new Database<DaoContractSchema>();
+  }, []); 
+  
   useEffect(() => {
+    const prepareData = async() =>{
+      setmessage("Gathering Daos For You!");
+      setloading(true);
+      try {
+        const { results } = await db.prepare<DaoContractSchema>(`SELECT * FROM ${daoTableName};`).all();
+        console.log(results);
+        setdaos(results);
+        setmessage("Storing Daos");
+        setloading(true);
+      } catch (error) {
+        console.log(error);
+        setmessage("Failed to store dao");
+        setloading(false);
+      }
+      setmessage("");
+     setloading(false);
+    }
+    if(typeof window !=="undefined")
     prepareData();
-  }, [])
+  }, [db])
   
   return (
     <div >

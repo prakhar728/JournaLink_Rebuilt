@@ -16,7 +16,7 @@ const App = () => {
 
     useEffect(() => {
         setRoomId(router.query.roomid?.toString() || "");
-    }, [router.query.roomid?.toString()]);
+    }, [router.query.roomid]);
     useRecorder(roomId, process.env.NEXT_PUBLIC_HUDDLE_KEY || "");
 
 

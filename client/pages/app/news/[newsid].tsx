@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Navbar from '../../../components/Navbar'
 import styles from "./Separate.module.css";
 import Link from 'next/link';
@@ -14,17 +14,18 @@ import { normalize } from 'viem/ens';
 
 declare var window: any
 
-const index = () => {
+const Index = () => {
   const router = useRouter();
   const { address } = useAccount();
   const [newsID, setnewsID] = useState("");
   const [news, setnews] = useState<newsSchema[]>([])
-  const db = new Database<newsSchema>();
+   //PREPARING TABLELAND
+   const db = useMemo(() => {
+    // Construct the `db` object here
+    return new Database<newsSchema>();
+  }, []); 
   const [activeSlide, setActiveSlide] = useState(1);
-  const publicClient = createPublicClient({
-    chain:mainnet ,
-    transport: http()
-  })
+  
   var walletClient: WalletClient;
   if (typeof window === "object") {
     walletClient = createWalletClient({
@@ -32,36 +33,30 @@ const index = () => {
       transport: custom(window.ethereum)
     })
   }
-  const getNews = async (newsid: string) => {
-    const { results } = await db.prepare<newsSchema>(`SELECT * FROM ${newsTableName} WHERE newsID=${newsid}  ; `).all();
-    console.log(results);
-try {
-  const ensName = await publicClient.getEnsName({
-    address: `0x${results[0].creatoraddress.substring(2,)}`,
-    })
-    console.log(ensName);
-    if(ensName)
-    {
-      results[0].creatoraddress = ensName;
-      // const ensText = await publicClient.getEnsAvatar({
-      //   name: normalize('wagmi-dev.eth'),
-      // })
-      
-    }
-    
-} catch (error) {
-  console.log(error);
-  
-}
-    
-    setnews(results)
-    console.log((new Date(parseInt(results[0].DOC))).toLocaleString());
-
-
-  }
+ 
   useEffect(() => {
-
-    if (router.isReady) {
+    const publicClient = createPublicClient({
+      chain: mainnet,
+      transport: http()
+    })
+    const getNews = async (newsid: string) => {
+      const { results } = await db.prepare<newsSchema>(`SELECT * FROM ${newsTableName} WHERE newsID=${newsid}  ; `).all();
+      console.log(results);
+      try {
+        const ensName = await publicClient.getEnsName({
+          address: `0x${results[0].creatoraddress.substring(2,)}`,
+        })
+        console.log(ensName);
+        if (ensName) {
+          results[0].creatoraddress = ensName;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      setnews(results)
+      console.log((new Date(parseInt(results[0].DOC))).toLocaleString());
+    }
+    if (typeof window !=="undefined") {
       if (typeof router.query.newsid == "string") {
         setnewsID(router.query.newsid)
         console.log(router.query.newsid);
@@ -69,7 +64,8 @@ try {
       }
 
     }
-  }, [router.isReady])
+  }, [router.query.newsid,db])
+
   const likePost = async (e: any) => {
     e.preventDefault();
     const newLikes = news[0].likes + 1;
@@ -78,10 +74,10 @@ try {
     try {
       if (address) {
         //@ts-ignore
-        const hash = await walletClient.sendTransaction({ 
-          account:address,
+        const hash = await walletClient.sendTransaction({
+          account: address,
           to: `0x${(news[0].creatoraddress).substring(2,)}`,
-          value:BigInt(parseUnits('1',18))
+          value: BigInt(parseUnits('1', 18))
         })
         const { meta: insert } = await db
           .prepare(
@@ -157,4 +153,4 @@ try {
   )
 }
 
-export default index
+export default Index

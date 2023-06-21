@@ -1,36 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import Navbar from '../../../components/Navbar'
 import lines from "../../../assets/Lines.png"
 import styles from "./CreateNews.module.css";
 import thumbpin from "../../../assets/thumbpin.svg";
 import moto from "../../../assets/Moto.svg";
 import Image from 'next/image';
-import { WalletClient, useAccount, useWalletClient } from 'wagmi';
-import { createPublicClient, createWalletClient, custom, http, parseUnits } from 'viem';
+import { WalletClient, useAccount } from 'wagmi';
+import { createPublicClient, createWalletClient, custom, http} from 'viem';
 import { filecoinCalibration } from 'viem/chains';
 import { Database } from "@tableland/sdk";
-import daoContractData from "../../../assets/contractData/Dao.json";
-import daoContractAddress from "../../../assets/contractData/Dao-address.json";
 import lighthouse from '@lighthouse-web3/sdk';
-import { DaoContractSchema, daoTableName, newsSchema, newsTableName } from '../../../tableland';
+import {  newsSchema, newsTableName } from '../../../tableland';
 import { useIsMounted } from '../../../hooks/useIsMounted';
 import lighthouseIMG from "../../../assets/lighthouse.png";
 import huddleImg from "../../../assets/Huddle.png";
 import Link from 'next/link';
 import { randomBytes } from 'crypto';
 import { useRouter } from 'next/router';
+import LoadingComponents from "../../../components/Loading/Index";
 const axios = require('axios').default;
 
 declare var window: any
 
 
 
-const index = () => {
+const Index = () => {
   //MISCELLANEOUS HELPER FUNCTIONS
   const [loading, setloading] = useState(false);
   const [message, setmessage] = useState("");
   const { address } = useAccount();
-  const mounted = useIsMounted();
   const [image, setimage] = useState<File>()
   const [imageURL, setimageURL] = useState("");
   const router = useRouter()
@@ -79,10 +77,6 @@ const index = () => {
     })
   }
 
-  const publicClient = createPublicClient({
-    chain: filecoinCalibration,
-    transport: http()
-  })
 
   // PREPARING TABLELAND
   const db = new Database<newsSchema>();
@@ -90,15 +84,15 @@ const index = () => {
   // THIS WILL DEPLOY THE CURRENT DAO CONTRACT AS WELL AS ADD DATA TO TABLELAND
   const handleClick = async (e: any) => {
     e.preventDefault();
+    setloading(true);
+    setmessage("Uploading News Securely");
     console.log("Uploading News Securely");
-    console.log("The Form data is");
     console.log(formData);
     const newsID = generateRandomNumber();
-    console.log("News ID is",newsID);
-    console.log(Date.now());
     
     try {
       setloading(true);
+      setmessage("Approve the Transaction in metamask to create the News!");
       if (address) {
         const { meta: insert } = await db
           .prepare(
@@ -117,13 +111,18 @@ const index = () => {
           )
           .run()
         await insert.txn?.wait();
+        setloading(false);
+      setmessage("");
       }
 
 
     } catch (error) {
       console.log(error);
-
+      setloading(false);
+      setmessage("");
     }
+    setloading(false);
+    setmessage("");
   }
 
 
@@ -203,6 +202,7 @@ const index = () => {
   return (
     <div >
       <Navbar />
+       { loading && <LoadingComponents message={message}/> }
       <div className={styles.createDaoWrapper}>
         <div className={styles.daoFormContainer1}></div>
         <div className={styles.daoFormContainer2}></div>
@@ -304,4 +304,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Index

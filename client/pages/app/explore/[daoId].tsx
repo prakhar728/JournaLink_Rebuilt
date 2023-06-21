@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styles from "./ExploreDao.module.css"
 import Navbar from '../../../components/Navbar'
 import Link from 'next/link';
@@ -17,7 +17,7 @@ import LoadingC from "../../../components/Loading/Index";
 import ErrorComponent from "../../../components/Error/Index";
 declare var window: any
 
-const index = () => {
+const Index = () => {
   // HOOKS FOR NEXTJS INITIALISATION
   const router = useRouter();
   const { address } = useAccount();
@@ -51,70 +51,79 @@ const index = () => {
   // PUBLIC CALL TO FETCH DATA
 
   //PREPARING TABLELAND
-  const db = new Database<DaoContractSchema>();
-
-  async function fetchDetailForEveryPrompt(prompts: promptSchema[]) {
-    var daoAddress = "0x";
-    if (typeof router.query.daoId == "string")
-      daoAddress = router.query.daoId;
-    let arr = [];
-    for (let i = 0; i < prompts.length; i++) {
-      console.log("here");
-      let p = prompts[i];
-      let prompId = p.promptid;
-      console.log('Wassup', prompId);
-
-      console.log(daoAddress);
-
-      const data = await publicClient.readContract({
-        address: `0x${daoAddress.substring(2,)}`,
-        abi: daoAbi.abi,
-        functionName: 'getProposalDetails',
-        args: [prompId]
-      })
-      console.log(data);
-      arr.push(data);
-    }
-    console.log(arr);
-    setloading(false);
-    setmesage("");
-    //@ts-ignore
-    setpromptDetails(arr);
-  }
-  const fetchPrompts = async () => {
-    setmesage("Now loading Available Prompts");
-    try {
-      if (typeof router.query.daoId == "string") {
-
-        console.log((router.query.daoId));
-        const addRress = `"${(router.query.daoId)}"`;
-        const { results } = await db.prepare<promptSchema>(`SELECT * FROM ${promptTableName} WHERE contractaddress=${addRress} `).all();
-        setprompts(results);
-        console.log(results);
-        setmesage("Syncing with Smart Contract");
-        fetchDetailForEveryPrompt(results);
+  const db = useMemo(() => {
+    // Construct the `db` object here
+    return new Database<DaoContractSchema>();
+  }, []); 
+  
+  
+  
+  useEffect(() => {
+    setmesage("Loading Dao");
+    setloading(true);
+    async function fetchDetailForEveryPrompt(prompts: promptSchema[]) {
+      var daoAddress = "0x";
+      if (typeof router.query.daoId == "string")
+        daoAddress = router.query.daoId;
+      let arr = [];
+      for (let i = 0; i < prompts.length; i++) {
+        console.log("here");
+        let p = prompts[i];
+        let prompId = p.promptid;
+        console.log('Wassup', prompId);
+  
+        console.log(daoAddress);
+  
+        const data = await publicClient.readContract({
+          address: `0x${daoAddress.substring(2,)}`,
+          abi: daoAbi.abi,
+          functionName: 'getProposalDetails',
+          args: [prompId]
+        })
+        console.log(data);
+        arr.push(data);
       }
-    } catch (error) {
-      console.log(error);
+      console.log(arr);
       setloading(false);
+      setmesage("");
+      //@ts-ignore
+      setpromptDetails(arr);
     }
-
-
-  }
-  const fetchDaoInfo = async () => {
-    if (router.query.daoId && typeof router.query.daoId == "string") {
+    const fetchPrompts = async () => {
+      setmesage("Now loading Available Prompts");
+      try {
+        if (typeof router.query.daoId == "string") {
+  
+          console.log((router.query.daoId));
+          const addRress = `"${(router.query.daoId)}"`;
+          const { results } = await db.prepare<promptSchema>(`SELECT * FROM ${promptTableName} WHERE contractaddress=${addRress} `).all();
+          setprompts(results);
+          console.log(results);
+          setmesage("Syncing with Smart Contract");
+          fetchDetailForEveryPrompt(results);
+        }
+      } catch (error) {
+        console.log(error);
+        setloading(false);
+      }
+    }
+    const fetchDaoInfo = async () => {
+      try {
+         if (router.query.daoId && typeof router.query.daoId == "string") {
       const addRress = `"${router.query.daoId}"`;
       const { results } = await db.prepare<DaoContractSchema>(`SELECT * FROM ${daoTableName} WHERE address =${addRress} `).all();
       setdaoInfo(results);
       console.log(results);
       fetchPrompts();
     }
+      } catch (error) {
+        console.log(error);
+      }
+   
   }
-  useEffect(() => {
-    setmesage("Loading Dao");
-    setloading(true);
+  if(typeof window !=="undefined")
     fetchDaoInfo();
-  }, [router.isReady])
+  }, [router.query.daoId,db,publicClient])
 
 
   const uploadFileToIPFS = async (file: FileList) => {
@@ -331,4 +340,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Index

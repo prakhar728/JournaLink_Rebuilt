@@ -10,12 +10,14 @@ import { useRouter } from 'next/router';
 const Navbar = () => {
   const {address} = useAccount();
   const router  = useRouter();
-  const [first, setfirst] = useState("");
+  const [first, setfirst] = useState<String>("");
   useEffect(() => {
-    if(router.isReady)
-    if(typeof address=="string")
-    setfirst(address)
-  }, [router.isReady])
+
+    if(typeof window !=="undefined"){
+      if(typeof address=="string")
+      setfirst(address)
+    }
+  }, [address])
   
   return (
     <div className={styles.navbarWrapper}>

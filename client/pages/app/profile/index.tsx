@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styles from "./Profile.module.css";
 import Navbar from '../../../components/Navbar';
 import Image from 'next/image';
@@ -16,7 +16,7 @@ import Link from 'next/link';
 declare var window: any
 
 
-const index = () => {
+const Index = () => {
   const { address, isConnecting, isDisconnected } = useAccount()
   const mounted = useIsMounted();
   const router = useRouter();
@@ -24,19 +24,22 @@ const index = () => {
   const [aboutThem, setaboutThem] = useState<UserSchema[]>([]);
   const [ensNNAME, setensNNAME] = useState("address");
   const [news, setnews] = useState<newsSchema[]>([])
-  const getProfile = async (address: string) => {
-    console.log("here's the profile");
-    setensAvatar(`https://effigy.im/a/${address}.png`);
-  }
+
   useEffect(() => {
+    const getProfile = async (address: string) => {
+      console.log("here's the profile");
+      setensAvatar(`https://effigy.im/a/${address}.png`);
+    }
     if (router.isReady) {
 
       if (typeof router.query.address == "string")
         getProfile(router.query.address);
     }
-  }, [router.isReady])
-  const db = new Database<UserSchema>();
-
+  }, [router.isReady, router.query.address])
+  const db = useMemo(() => {
+    // Construct the `db` object here
+    return new Database<UserSchema>();
+  }, []); 
   //  const prepareDB = async () => {
   //   const prefix: string = "user_table";
 
@@ -50,10 +53,7 @@ const index = () => {
   //   prepareDB();
   //   // test();
   // }, [mounted])
-  const publicClient = createPublicClient({
-    chain:mainnet ,
-    transport: http()
-  })
+
   var walletClient: WalletClient;
   if (typeof window === "object") {
     walletClient = createWalletClient({
@@ -61,70 +61,72 @@ const index = () => {
       transport: custom(window.ethereum)
     })
   }
-  const getUserInfo = async () => {
-    console.log(router.query);
-    
-    if (typeof router.query.address == "string") {
-     
-      
-      try {
-        const { results } = await db.prepare<UserSchema>(`SELECT * FROM ${userTableName} WHERE address="${router.query.address}" ;`).all();
-        console.log(`SELECT * FROM ${userTableName} WHERE address="${router.query.address}" `);
-        console.log(results);
-        const ensName = await publicClient.getEnsName({
-          address: `0x${router.query.address.substring(2,)}`,
+  
+
+  useEffect(() => {
+    const publicClient = createPublicClient({
+      chain: mainnet,
+      transport: http()
+    })
+    const getUserInfo = async () => {
+      console.log(router.query);
+      if (typeof router.query.address == "string") {
+        try {
+          const { results } = await db.prepare<UserSchema>(`SELECT * FROM ${userTableName} WHERE address="${router.query.address}" ;`).all();
+          console.log(`SELECT * FROM ${userTableName} WHERE address="${router.query.address}" `);
+          console.log(results);
+          const ensName = await publicClient.getEnsName({
+            address: `0x${router.query.address.substring(2,)}`,
           })
           console.log(ensName);
-          
-          if(ensName)
-          {
+
+          if (ensName) {
             setensNNAME(ensName);
             results[0].address = ensName;
             const ensText = await publicClient.getEnsAvatar({
               name: normalize(ensName),
             })
-            if(ensText)
-            setensAvatar(ensText);
+            if (ensText)
+              setensAvatar(ensText);
           }
-      setaboutThem(results);
-          
-      } catch (error) {
-        console.log(error);
-        
+          setaboutThem(results);
+
+        } catch (error) {
+          console.log(error);
+
+        }
       }
     }
-  }
-  const getNews = async() =>{
-    const { results } = await db.prepare<newsSchema>(`SELECT * FROM ${newsTableName} WHERE creatoraddress="${router.query.address}" ;`).all();
-        console.log(`SELECT * FROM ${userTableName} WHERE address="${router.query.address}" `);
-        console.log(results);
-        setnews(results);
-  }
-  useEffect(() => {
-    if (router.isReady  ) {
-      if(typeof router.query.address == "string")
-      setensNNAME(router.query.address.substring(0,4)+"..."+router.query.address.substring(38,));
+    const getNews = async () => {
+      const { results } = await db.prepare<newsSchema>(`SELECT * FROM ${newsTableName} WHERE creatoraddress="${router.query.address}" ;`).all();
+      console.log(`SELECT * FROM ${userTableName} WHERE address="${router.query.address}" `);
+      console.log(results);
+      setnews(results);
+    }
+    if (router.isReady) {
+      if (typeof router.query.address == "string")
+        setensNNAME(router.query.address.substring(0, 4) + "..." + router.query.address.substring(38,));
       getUserInfo();
       getNews();
     }
-  }, [router.isReady])
+  }, [router.isReady,db,router.query])
 
 
   return (
     <div className={styles.profileWrapper}>
       <Navbar />
       {router.query.address && router.query.address == address &&
-      <>
-      <Link href={`/app/createprofile?address=${router.query.address}`}><button>Create Profile</button></Link>
-      <Link href={`/app/live?roomid=${aboutThem[0]?.liveLink}`}><button>Go Live</button></Link>
-      </>
+        <>
+          <Link href={`/app/createprofile?address=${router.query.address}`}><button>Create Profile</button></Link>
+          <Link href={`/app/live?roomid=${aboutThem[0]?.liveLink}`}><button>Go Live</button></Link>
+        </>
       }
 
-    {router.query.address && router.query.address != address &&
-      <>
-      <Link href={`/app/viewlive?roomid=${aboutThem[0]?.liveLink}`}><button>Go Live</button></Link>
-      </>
-      }   
+      {router.query.address && router.query.address != address &&
+        <>
+          <Link href={`/app/viewlive?roomid=${aboutThem[0]?.liveLink}`}><button>Go Live</button></Link>
+        </>
+      }
       <div className={styles.heading}>
         MY PROFILE
       </div>
@@ -150,7 +152,7 @@ const index = () => {
           </div>
           <div className={styles.Details}>
             <div className={styles.quote}>
-              {aboutThem.length!=0 && aboutThem[aboutThem.length-1].quote}
+              {aboutThem.length != 0 && aboutThem[aboutThem.length - 1].quote}
             </div>
             <div className={styles.ENSNAME}>
               {ensNNAME}
@@ -162,10 +164,10 @@ const index = () => {
           <div className={styles.list}>
             News
             <div className={styles.newsList}>
-              {news.length!=0 && news.map((n,i)=>{
-                return(
+              {news.length != 0 && news.map((n, i) => {
+                return (
                   <p key={i}>
-                    "{n.headline}"
+                    &quot;{n.headline}&quot;
                   </p>
                 )
               })}
@@ -177,4 +179,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Index

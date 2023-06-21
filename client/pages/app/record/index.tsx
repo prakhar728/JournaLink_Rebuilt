@@ -14,7 +14,7 @@ import mic from "../../../assets/Mic.png";
 import exit from "../../../assets/exit.png";
 import { Audio, Video } from '@huddle01/react/components';
 import Image from 'next/image';
-const index = () => {
+const Index = () => {
     const { initialize, isInitialized } = useHuddle01();
     const { joinLobby, isLobbyJoined, error } = useLobby();
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -35,13 +35,13 @@ const index = () => {
         data: recordingData,
     } = useRecording();
     const { joinRoom, leaveRoom } = useRoom();
-    const huddleKey = process.env.NEXT_PUBLIC_HUDDLE_KEY;
     const { roomid } = router.query;
 
     useEffect(() => {
         toast("Wow so easy!", {
             toastId: 'test',
         });
+    const huddleKey = process.env.NEXT_PUBLIC_HUDDLE_KEY;
 
         if (typeof router.query.roomid == "string") {
             if (typeof huddleKey == "string") {
@@ -54,14 +54,14 @@ const index = () => {
             // if(isInitialized)
             // joinLobby(router.query.roomid);
         }
-    }, [router.isReady])
+    }, [router.isReady,initialize,router.query.roomid])
 
     //AUTOMATIC LOBBY JOIN
     useEffect(() => {
         if (isInitialized)
             //@ts-ignore
             joinLobby(roomid)
-    }, [isInitialized])
+    }, [isInitialized,joinLobby,roomid])
 
     //FETCH VIDEO STREAM
     useEffect(() => {
@@ -248,4 +248,4 @@ const index = () => {
     )
 }
 
-export default index
+export default Index
