@@ -1,0 +1,44 @@
+{
+  "createDapp": {
+    "id": "fb45d301-6c01-4233-b767-504d34e40663",
+    "streamIDs": [
+      {
+        "name": "firstapp981_profile",
+        "stream_id": "kjzl6hvfrbw6c9ai8h53ogchdxkow536aivlt61ngfs47kolvogpsb659fm461g",
+        "isPublicDomain": true,
+        "encryptable": null
+      },
+      {
+        "name": "firstapp981_indexFiles",
+        "stream_id": "kjzl6hvfrbw6c7wm2kyyaf51gfc5rub55rrakaq13z642bynmm4xayl2a3jhc9h",
+        "isPublicDomain": false,
+        "encryptable": null
+      },
+      {
+        "name": "firstapp981_contentFolders",
+        "stream_id": "kjzl6hvfrbw6c9kk95uxynln7scsb01a7bs30mwj7w56m2q187nbgainpwv0kcm",
+        "isPublicDomain": false,
+        "encryptable": null
+      },
+      {
+        "name": "firstapp981_post",
+        "stream_id": "kjzl6hvfrbw6c5ubwamu1m44kofw4wuy76jp6xu8fqn10t1qp688ipklgh2nerc",
+        "isPublicDomain": false,
+        "encryptable": ["text", "images", "videos"]
+      },
+      {
+        "name": "firstapp981_indexFolders",
+        "stream_id": "kjzl6hvfrbw6cb7qlvml33zvspv7smfggl4iwtubpf8b8ausyjp337lakr70xp1",
+        "isPublicDomain": false,
+        "encryptable": null
+      }
+    ],
+    "website": "http://localhost:3000",
+    "name": "FirstApp",
+    "slug": "firstapp981",
+    "logo": "hhhh",
+    "description": "A simple Test",
+    "defaultFolderName": "Untitled",
+    "ceramic": "https://local1.dataverseceramicdaemon.com"
+  }
+}

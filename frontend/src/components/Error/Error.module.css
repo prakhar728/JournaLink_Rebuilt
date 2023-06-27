@@ -1,0 +1,45 @@
+.errorMessage{
+    height: 40vh;
+    width: 30vw;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+}
+.closeButton{
+    width: 100%;
+    display: flex;
+    background-color: black;
+    justify-content: flex-end;
+}
+.closeButton button{
+    background-color: black;
+    color:white;
+    border:none;
+    font-size: 18px;
+}
+.mainContent{
+    height: 100%;
+    width: 100%;
+    background-color: black;
+
+}
+.imageWrapper{
+    width: 100%;
+    height: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.imageWrapper img{
+    height: 100%;
+    width: auto;
+}
+.messageWrapper{
+    text-align: center;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
