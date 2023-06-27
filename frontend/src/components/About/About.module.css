@@ -1,0 +1,59 @@
+.aboutWrapper{
+    padding-left: 3vw;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+
+}
+.aboutHeading{
+    font-family: 'Chomsky';
+    font-size: 48px;
+    height: 20%;
+}
+.mainAbout{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 80%;
+    padding:0 10%;
+}
+.left{
+    width: 40%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+.left img{
+    height: 100%;
+}
+.right{
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    
+}
+.rightContent{
+    width: 70%;
+    border:2px solid #F2E7D4;
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    padding:0 5%;
+}
+.contentHeading{
+    font-size: 24px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
+}
+.contentDescription{
+    font-size: 24px;
+    text-align: center;
+}

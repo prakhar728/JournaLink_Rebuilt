@@ -1,0 +1,19 @@
+.navbarWrapper{
+    border-bottom:1px solid white;
+    height:10vh;
+    display: flex;
+    justify-content: space-between;
+    padding:0 4vw;
+    align-items: center;
+}
+.navbarWrapper img{
+    cursor: pointer;
+}
+.navbarWrapper button{
+    background-image: linear-gradient(#B15556,#F99495);
+}
+.profileHolder{
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+}
