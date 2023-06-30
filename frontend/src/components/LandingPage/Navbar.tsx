@@ -5,7 +5,27 @@ import Frame from "../../assets/NavFrame.svg"
 import profileIcon from "../../assets/ProfileIcon.svg";
 import dots from "../../assets/Dots.svg";
 import { Link } from 'react-router-dom';
+import { useStream, useWallet } from '../../hooks';
 const Navbar = () => {
+  const { connectWallet } = useWallet();
+
+  const {
+    pkh,
+    createCapability,
+    loadStreams,
+    createPublicStream,
+    createEncryptedStream,
+    createPayableStream,
+    monetizeStream,
+    unlockStream,
+    updateStream,
+  } = useStream();
+    const connect = async () => {
+        const { wallet } = await connectWallet();
+        const pkh = await createCapability(wallet);
+        console.log("pkh:", pkh);
+        return pkh;
+      };
     return (
         <div className={ "navWrapper"}>
             <div className={ "upper1"}>
@@ -18,6 +38,7 @@ const Navbar = () => {
                     <img src={Frame} alt="Frame" />
                 </div>
                 <div className={ "walletAndProfile"}>
+                    {pkh? pkh:<button onClick={connect}>connect</button>}
                     <Link to="/app/profile"><img src={profileIcon} alt="Go to your profile" />
                     </Link>
                 </div>

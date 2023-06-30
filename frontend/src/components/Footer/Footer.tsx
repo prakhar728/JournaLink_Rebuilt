@@ -1,15 +1,14 @@
 import React from 'react'
-import styles from "./Footer.module.css";
-import Image from 'next/image';
+import  "./Footer.css";
 import shape from "../../assets/Shape.png";
 const Footer = () => {
   return (
-    <div className={styles.FooterWrapper}>
-        <div className={styles.shapeWrapper}>
+    <div className={"FooterWrapper"}>
+        <div className={"shapeWrapper"}>
 
-        <Image src={shape} alt="Footer shape" />
+        <img src={shape} alt="Footer shape" />
         </div>
-        <div className={styles.content}>
+        <div className={"content"}>
             Random Bullshit
         </div>
     </div>

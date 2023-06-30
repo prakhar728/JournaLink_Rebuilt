@@ -1,18 +1,18 @@
 import React, { useState } from 'react'
-import styles from './DaoNav.module.css';
-import Link from 'next/link';
+import  './DaoNav.css';
+import { Link } from 'react-router-dom';
 const Index = () => {
   const [activeElement, setactiveElement] = useState("1");
   const handleClick = (e:any) =>{
     console.log('Clicked');
   }
   return (
-    <div className={styles.daoNav}>
-      <Link href="/app/explore"  className={`${styles.navLink} ${activeElement=== '1' ? styles.active : ''
+    <div className={"daoNav"}>
+      <Link to="/app/explore"  className={`${"daonavLink"} ${activeElement=== '1' ? "active" : ''
           }`} onClick={(e)=>{
         setactiveElement("1");
       }}>Explore DAOs</Link>
-      <Link  href="/app/createdao" className={`${styles.navLink} ${activeElement=== '2' ? styles.active : ''
+      <Link  to="/app/createdao" className={`${"daonavLink"} ${activeElement=== '2' ? "active" : ''
           }`} onClick={(e)=>{
         setactiveElement("2");
       }}>Create DAO +</Link>

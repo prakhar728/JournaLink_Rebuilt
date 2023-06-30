@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import styles from "./Navbar.module.css";
-import Image from 'next/image';
+import "./Navbar.css";
 import logo from '../assets/Logo.png';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import Link from 'next/link';
 import profile from "../assets/ProfileIcon.svg";
 import { useAccount } from 'wagmi';
-import { useRouter } from 'next/router';
+import { Link } from 'react-router-dom';
 const Navbar = () => {
   const {address} = useAccount();
-  const router  = useRouter();
   const [first, setfirst] = useState<String>("");
   useEffect(() => {
 
@@ -20,15 +17,14 @@ const Navbar = () => {
   }, [address])
   
   return (
-    <div className={styles.navbarWrapper}>
+    <div className={"navbarWrapper"}>
       <div>
-        <Image src={logo} alt="Logo" onClick={e=>{
-          router.push("/");
+        <img src={logo} alt="Logo" onClick={e=>{
         }}/>
       </div>
-      <div className={styles.profileHolder}>
+      <div className={"profileHolder"}>
       <ConnectButton />
-      {first && <Link href={`/app/profile?address=${first}`}><Image src={profile} alt="Profile" /></Link>}
+      {first && <Link to={`/app/profile?address=${first}`}><img src={profile} alt="Profile" /></Link>}
       </div>
     </div>
   )

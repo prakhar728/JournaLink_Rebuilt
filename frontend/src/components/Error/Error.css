@@ -1,4 +1,4 @@
-.loadingWrapper{
+.errorMessage{
     height: 40vh;
     width: 30vw;
     position: absolute;
@@ -6,23 +6,36 @@
     left:50%;
     transform: translate(-50%,-50%);
 }
-.mainContent{
+.closeButton{
+    width: 100%;
+    display: flex;
+    background-color: black;
+    justify-content: flex-end;
+}
+.closeButton button{
+    background-color: black;
+    color:white;
+    border:none;
+    font-size: 18px;
+}
+.errormainContent{
     height: 100%;
     width: 100%;
-    background-color: #0d0d0d;
+    background-color: black;
+
 }
-.imageWrapper{
+.errorimageWrapper{
     width: 100%;
     height: 70%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.imageWrapper img{
+.errorimageWrapper img{
     height: 100%;
     width: auto;
 }
-.messageWrapper{
+.errormessageWrapper{
     text-align: center;
     width: 100%;
     display: flex;
